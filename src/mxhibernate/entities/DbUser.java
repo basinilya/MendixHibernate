@@ -1,4 +1,4 @@
-package snippet.entities;
+package mxhibernate.entities;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.DiscriminatorColumn;
@@ -8,10 +8,9 @@ import jakarta.persistence.Inheritance;
 import jakarta.persistence.InheritanceType;
 import jakarta.persistence.Table;
 
-@Entity(name = snippet.entities.DbUser.entityName)
+@Entity(name = mxhibernate.entities.DbUser.entityName)
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "system$user")
-// @DiscriminatorFormula("'as ")
 @DiscriminatorColumn(name = "submetaobjectname")
 public class DbUser {
 
