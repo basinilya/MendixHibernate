@@ -7,6 +7,7 @@ import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.function.Consumer;
@@ -62,11 +63,13 @@ public class MendixHibernate {
     }
 
     private static void customLogic0(final DataSource dataSource) throws SQLException {
-        logUsersWithPureJdbc(dataSource);
-        logUsersWithHibernate(dataSource);
+        final List<Long> userIds = logUsersWithPureJdbc(dataSource);
+        logUsersWithHibernate(dataSource, userIds);
     }
 
-    private static void logUsersWithPureJdbc(final DataSource dataSource) throws SQLException {
+    private static List<Long> logUsersWithPureJdbc(final DataSource dataSource)
+                                                                                throws SQLException {
+        final List<Long> res = new ArrayList<>();
         try (
             Connection conn = dataSource.getConnection();
             Statement stmt = conn.createStatement();
@@ -79,6 +82,7 @@ public class MendixHibernate {
             for (int i = 0; i < 10 && rs.next(); i++) {
                 for (int iCol = 1, nCols = metaData.getColumnCount(); iCol <= nCols; iCol++) {
                     System.out.print("(" + metaData.getColumnName(iCol) + ":" + rs.getString(iCol) + ")");
+                    res.add(rs.getLong("id"));
                 }
                 System.out.println();
             }
@@ -87,15 +91,30 @@ public class MendixHibernate {
             }
             System.out.println();
         }
+        return res;
     }
 
-    private static void logUsersWithHibernate(final DataSource dataSource) {
+    private static void logUsersWithHibernate(
+            final DataSource dataSource,
+            final List<Long> userIds) {
         try (final SessionFactory sessionFactory = makeSessionFactoryBuilder(dataSource).build();) {
             final EntityManager entityManager = sessionFactory.createEntityManager();
             final Metamodel metamodel = entityManager.getMetamodel();
             logKnownEntities(metamodel);
-            retrieveAllMxUsers(entityManager);
+            logAllMxUsersWithIds(userIds, entityManager);
+            logAllMxUsersByQuery(entityManager);
         }
+    }
+
+    private static void logAllMxUsersWithIds(
+            final List<Long> userIds,
+            final EntityManager entityManager) {
+        System.out.println("Users by Ids:");
+        for (final Long userId : userIds) {
+            final DbUser obj = entityManager.find(DbUser.class, userId);
+            logObject(entityManager, obj);
+        }
+        System.out.println();
     }
 
     private static void logKnownEntities(final Metamodel metamodel) {
@@ -105,16 +124,23 @@ public class MendixHibernate {
         System.out.println();
     }
 
-    private static void retrieveAllMxUsers(final EntityManager entityManager) {
-        final Query query = entityManager.createQuery("select System.User from System.User");
+    private static void logAllMxUsersByQuery(final EntityManager entityManager) {
+        System.out.println("Users by Query:");
+        final Query query = entityManager.createQuery("select `System.User` ");
         @SuppressWarnings("unchecked")
         final List<DbUser> objs = query.getResultList();
         for (final DbUser obj : objs) {
-            System.out
-                .println(
-                    entityManager.getMetamodel().entity(obj.getClass()).getName() + ": " + obj
-                        .getName());
+            logObject(entityManager, obj);
         }
+    }
+
+    private static void logObject(final EntityManager entityManager, final DbUser obj) {
+        System.out
+            .println(getEntityName(entityManager, obj) + ": " + obj.getId() + "," + obj.getName());
+    }
+
+    private static String getEntityName(final EntityManager entityManager, final DbUser obj) {
+        return entityManager.getMetamodel().entity(obj.getClass()).getName();
     }
 
     private static String getLocalDbJdbcUrl() {
@@ -136,6 +162,7 @@ public class MendixHibernate {
 
         final ServiceRegistry standardRegistry =
             new StandardServiceRegistryBuilder()
+                .applySetting(AvailableSettings.GLOBALLY_QUOTED_IDENTIFIERS, true)
                 .applySetting(
                     AvailableSettings.HBM2DDL_AUTO,
                     org.hibernate.tool.schema.Action.VALIDATE.getExternalHbm2ddlName())
