@@ -158,11 +158,10 @@ public class MendixNiberhate {
         final StringBuilder serverUrl = new StringBuilder();
         serverUrl.append("file:");
         final String databaseName = "default";
-        final String child = "hsqldb/" + databaseName + "/" + databaseName;
-        final File databaseDir = new File("target/database", child);
+        final File databaseDir = new File("target/database/hsqldb/" + databaseName);
         databaseDir.mkdirs();
         PathUtils.cleanDirectory(databaseDir.toPath());
-        serverUrl.append(databaseDir);
+        serverUrl.append(databaseDir).append('/').append(databaseName);
 
         return "jdbc:hsqldb:" + serverUrl.toString();
     }
