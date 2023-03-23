@@ -86,8 +86,8 @@ public class MendixHibernate {
                 for (int iCol = 1, nCols = metaData.getColumnCount(); iCol <= nCols; iCol++) {
                     System.out
                         .print("(" + metaData.getColumnName(iCol) + ":" + rs.getString(iCol) + ")");
-                    res.add(rs.getLong("id"));
                 }
+                res.add(rs.getLong("id"));
                 System.out.println();
             }
             if (rs.next()) {
