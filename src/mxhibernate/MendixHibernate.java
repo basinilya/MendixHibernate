@@ -1,6 +1,7 @@
 package mxhibernate;
 
 import java.io.File;
+import java.io.IOException;
 import java.net.URL;
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -37,7 +38,9 @@ import mxhibernate.entities.DbUser;
 public class MendixHibernate {
 
     private static String jdbcUrl;
+
     private static String user;
+
     private static String password;
 
     public static void main(final String[] args) throws Exception {
@@ -81,7 +84,8 @@ public class MendixHibernate {
             final ResultSetMetaData metaData = rs.getMetaData();
             for (int i = 0; i < 10 && rs.next(); i++) {
                 for (int iCol = 1, nCols = metaData.getColumnCount(); iCol <= nCols; iCol++) {
-                    System.out.print("(" + metaData.getColumnName(iCol) + ":" + rs.getString(iCol) + ")");
+                    System.out
+                        .print("(" + metaData.getColumnName(iCol) + ":" + rs.getString(iCol) + ")");
                     res.add(rs.getLong("id"));
                 }
                 System.out.println();
@@ -94,9 +98,8 @@ public class MendixHibernate {
         return res;
     }
 
-    private static void logUsersWithHibernate(
-            final DataSource dataSource,
-            final List<Long> userIds) {
+    private static void logUsersWithHibernate(final DataSource dataSource, final List<Long> userIds)
+                                                                                                     throws SQLException {
         try (final SessionFactory sessionFactory = makeSessionFactoryBuilder(dataSource).build();) {
             final EntityManager entityManager = sessionFactory.createEntityManager();
             final Metamodel metamodel = entityManager.getMetamodel();
@@ -143,14 +146,13 @@ public class MendixHibernate {
         return entityManager.getMetamodel().entity(obj.getClass()).getName();
     }
 
-    private static String getLocalDbJdbcUrl() {
+    private static String getLocalDbJdbcUrl() throws IOException {
         final StringBuilder serverUrl = new StringBuilder();
         serverUrl.append("file:");
         final String databaseName = "default";
         final String child = "hsqldb/" + databaseName + "/" + databaseName;
-        final String databasePath =
-            new File("DummyMendixApp/deployment/data/database", child).toString();
-        serverUrl.append(databasePath).append(";ifexists=true;readonly=true;");
+        final File databaseDir = new File("DummyMendixApp/deployment/data/database", child);
+        serverUrl.append(databaseDir).append(";ifexists=true;readonly=true;");
 
         return "jdbc:hsqldb:" + serverUrl.toString();
     }
@@ -212,7 +214,7 @@ public class MendixHibernate {
         password = xpassword;
     }
 
-    private static void initLocalDbDetails() {
+    private static void initLocalDbDetails() throws IOException {
         jdbcUrl = getLocalDbJdbcUrl();
         user = "SA";
         password = "";
@@ -228,7 +230,7 @@ public class MendixHibernate {
 
         @Override
         public List<URL> getNonRootUrls() {
-            final URL url = DbUser.class.getProtectionDomain().getCodeSource().getLocation();
+            final URL url = DbUser.class.getResource("");
             return Collections.singletonList(url);
         }
 
