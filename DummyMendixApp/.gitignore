@@ -1,6 +1,10 @@
 /*.launch
-#!/deployment/data/database/
 /deployment/
+!/deployment/
+/deployment/*
+!/deployment/data/
+/deployment/data/*
+!/deployment/data/database/
 /packages/
 /releases/
 /.mendix-cache/
