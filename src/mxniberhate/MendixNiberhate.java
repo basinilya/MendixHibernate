@@ -32,7 +32,7 @@ import com.zaxxer.hikari.HikariDataSource;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityTransaction;
-import jakarta.persistence.Query;
+import jakarta.persistence.TypedQuery;
 import jakarta.persistence.metamodel.EntityType;
 import jakarta.persistence.metamodel.Metamodel;
 import mxniberhate.entities.DbAccount;
@@ -137,8 +137,9 @@ public class MendixNiberhate {
 
     private static void logAllMxUsersByQuery(final EntityManager entityManager) {
         System.out.println("Users by Query:");
-        final Query query = entityManager.createQuery("select `System.User` ");
-        @SuppressWarnings("unchecked")
+        final String entityName = getEntityName(entityManager, DbUser.class);
+        final TypedQuery<DbUser> query =
+            entityManager.createQuery("select a from `" + entityName + "` a", DbUser.class);
         final List<DbUser> objs = query.getResultList();
         for (final DbUser obj : objs) {
             logObject(entityManager, obj);
@@ -147,11 +148,15 @@ public class MendixNiberhate {
 
     private static void logObject(final EntityManager entityManager, final DbUser obj) {
         System.out
-            .println(getEntityName(entityManager, obj) + ": " + obj.getId() + "," + obj.getName());
+            .println(getObjEntityName(entityManager, obj) + ": " + obj.getId() + "," + obj.getName());
     }
 
-    private static String getEntityName(final EntityManager entityManager, final DbUser obj) {
+    private static String getObjEntityName(final EntityManager entityManager, final DbUser obj) {
         return entityManager.getMetamodel().entity(obj.getClass()).getName();
+    }
+
+    private static String getEntityName(final EntityManager entityManager, final Class<?> clazz) {
+        return entityManager.getMetamodel().entity(clazz).getName();
     }
 
     private static String getLocalDbJdbcUrl() throws IOException {
