@@ -33,6 +33,7 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.TypedQuery;
 import jakarta.persistence.metamodel.EntityType;
 import jakarta.persistence.metamodel.Metamodel;
+import mxhibernate.entities.DbAccount;
 import mxhibernate.entities.DbUser;
 
 public class MendixHibernate {
@@ -66,21 +67,36 @@ public class MendixHibernate {
     }
 
     private static void customLogic0(final DataSource dataSource) throws SQLException {
-        final List<Long> userIds = logUsersWithPureJdbc(dataSource);
+        final List<Long> userIds;
+        try (Connection conn = dataSource.getConnection();) {
+            userIds = logUsersWithPureJdbc(conn);
+            logAccountsWithPureJdbc(conn);
+            logRolesWithPureJdbc(conn);
+        }
         logUsersWithHibernate(dataSource, userIds);
     }
 
-    private static List<Long> logUsersWithPureJdbc(final DataSource dataSource)
-                                                                                throws SQLException {
+    private static List<Long> logUsersWithPureJdbc(final Connection conn) throws SQLException {
+        return logTable(conn, "system$user", "\"id\",\"submetaobjectname\",\"name\"");
+    }
+
+    private static List<Long> logAccountsWithPureJdbc(final Connection conn) throws SQLException {
+        return logTable(conn, "administration$account", "*");
+    }
+
+    private static List<Long> logRolesWithPureJdbc(final Connection conn) throws SQLException {
+        return logTable(conn, "system$userrole", "*");
+    }
+
+    private static List<Long> logTable(
+            final Connection conn,
+            final String table,
+            final String columns) throws SQLException {
         final List<Long> res = new ArrayList<>();
         try (
-            Connection conn = dataSource.getConnection();
             Statement stmt = conn.createStatement();
-            ResultSet rs =
-                stmt
-                    .executeQuery(
-                        "select \"id\",\"submetaobjectname\",\"name\" from \"system$user\"");) {
-            System.out.println("contents of system$user:");
+            ResultSet rs = stmt.executeQuery("select " + columns + " from \"" + table + "\"");) {
+            System.out.println("contents of " + table + ":");
             final ResultSetMetaData metaData = rs.getMetaData();
             for (int i = 0; i < 10 && rs.next(); i++) {
                 for (int iCol = 1, nCols = metaData.getColumnCount(); iCol <= nCols; iCol++) {
@@ -140,7 +156,19 @@ public class MendixHibernate {
 
     private static void logObject(final EntityManager entityManager, final DbUser obj) {
         System.out
-            .println(getObjEntityName(entityManager, obj) + ": " + obj.getId() + "," + obj.getName());
+            .println(
+                getObjEntityName(entityManager, obj) + ": " + obj.getId() + "," + obj.getName()
+                    + getDbAccountString(obj));
+    }
+
+    private static String getDbAccountString(final DbUser obj) {
+        String s;
+        if (obj instanceof DbAccount) {
+            s = ",IsLocalUser:" + ((DbAccount) obj).getIsLocalUser();
+        } else {
+            s = "";
+        }
+        return s;
     }
 
     private static String getObjEntityName(final EntityManager entityManager, final DbUser obj) {

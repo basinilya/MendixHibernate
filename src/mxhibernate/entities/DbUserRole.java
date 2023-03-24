@@ -1,20 +1,18 @@
 package mxhibernate.entities;
 
 import jakarta.persistence.Column;
-import jakarta.persistence.DiscriminatorColumn;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Inheritance;
 import jakarta.persistence.InheritanceType;
 import jakarta.persistence.Table;
 
-@Entity(name = mxhibernate.entities.DbUser.entityName)
+@Entity(name = mxhibernate.entities.DbUserRole.entityName)
 @Inheritance(strategy = InheritanceType.JOINED)
-@Table(name = "system$user")
-@DiscriminatorColumn(name = "submetaobjectname")
-public class DbUser {
+@Table(name = "system$userrole")
+public class DbUserRole {
 
-    public static final java.lang.String entityName = "System.User";
+    public static final java.lang.String entityName = "System.Userrole";
 
     private long id;
 
