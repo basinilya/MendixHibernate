@@ -20,7 +20,10 @@ import org.hibernate.boot.Metadata;
 import org.hibernate.boot.MetadataBuilder;
 import org.hibernate.boot.MetadataSources;
 import org.hibernate.boot.SessionFactoryBuilder;
+import org.hibernate.boot.jaxb.Origin;
+import org.hibernate.boot.jaxb.SourceType;
 import org.hibernate.boot.jaxb.mapping.JaxbEntityMappings;
+import org.hibernate.boot.jaxb.spi.Binding;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import org.hibernate.boot.registry.classloading.internal.ClassLoaderServiceImpl;
 import org.hibernate.boot.registry.classloading.spi.ClassLoaderService;
@@ -66,7 +69,7 @@ public class MendixHibernate {
         }
 
         try {
-        executeWithMxDataSource(MendixHibernate::customLogic);
+            executeWithMxDataSource(MendixHibernate::customLogic);
         } finally {
             // dumpconf(jaxbEntityMappings);
         }
@@ -270,6 +273,7 @@ public class MendixHibernate {
         final ServiceRegistry standardRegistry =
             new StandardServiceRegistryBuilder()
                 .applySetting(AvailableSettings.GLOBALLY_QUOTED_IDENTIFIERS, true)
+                .applySetting(AvailableSettings.TRANSFORM_HBM_XML, true)
                 .applySetting(
                     AvailableSettings.HBM2DDL_AUTO,
                     org.hibernate.tool.schema.Action.VALIDATE.getExternalHbm2ddlName())
@@ -280,6 +284,14 @@ public class MendixHibernate {
         final MetadataSources sources = new MetadataSources(standardRegistry);
         // sources.addFile(new File("generated.hbm.xml"));
         sources.addFile(new File("generated-mapping.xml"));
+
+        if ("".length() == 10) {
+            // see HbmXmlTransformer
+            final JaxbEntityMappings ormRoot = new JaxbEntityMappings();
+            final Origin origin = new Origin(SourceType.OTHER, "mendix-metadata");
+            final Binding<JaxbEntityMappings> binding = new Binding<>(ormRoot, origin);
+            sources.addXmlBinding(binding);
+        }
 
         final MetadataBuilder metadataBuilder = sources.getMetadataBuilder();
 
