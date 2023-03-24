@@ -12,9 +12,9 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 
-@Entity(name = mxhibernate.entities.DbUser.entityName)
+@Entity(name = DbUser.entityName)
 @Inheritance(strategy = InheritanceType.JOINED)
-@DiscriminatorColumn(name = mxhibernate.MxHibernateConstants.SUBMETAOBJECTNAME)
+@DiscriminatorColumn(name = mxhibernate.MxHibernateConstants.DISCRIMINATOR_COLUMN)
 public class DbUser {
 
     public static final java.lang.String entityName = "System.User";
@@ -50,7 +50,9 @@ public class DbUser {
 
     private String name;
 
-    @Column(name = "name")
+    private List<DbUserRole> userRoles;
+
+    @Column(name = DbUser.entityName + "/Name")
     public String getName() {
         return name;
     }
@@ -60,7 +62,6 @@ public class DbUser {
     }
 
     @Id
-    @Column(name = "id")
     public long getId() {
         return id;
     }
@@ -69,15 +70,13 @@ public class DbUser {
         this.id = id;
     }
 
-    private List<DbUserRole> userRoles;
-
     @ManyToMany
     @JoinTable(
             name = "System.UserRoles",
             joinColumns = @JoinColumn(
-                    name = "System.UserRoles/" + mxhibernate.MxHibernateConstants.PARENT_COLUMN), // "system$userid"
+                    name = "System.UserRoles/" + mxhibernate.MxHibernateConstants.PARENT_COLUMN),
             inverseJoinColumns = @JoinColumn(
-                    name = "System.UserRoles/" + mxhibernate.MxHibernateConstants.CHILD_COLUMN)) // "system$userroleid"
+                    name = "System.UserRoles/" + mxhibernate.MxHibernateConstants.CHILD_COLUMN))
     public List<DbUserRole> getUserRoles() {
         return userRoles;
     }

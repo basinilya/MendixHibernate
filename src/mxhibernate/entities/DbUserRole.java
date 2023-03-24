@@ -9,17 +9,38 @@ import jakarta.persistence.Inheritance;
 import jakarta.persistence.InheritanceType;
 import jakarta.persistence.ManyToMany;
 
-@Entity(name = mxhibernate.entities.DbUserRole.entityName)
+@Entity(name = DbUserRole.entityName)
 @Inheritance(strategy = InheritanceType.JOINED)
 public class DbUserRole {
 
     public static final java.lang.String entityName = "System.Userrole";
 
+    public enum MemberNames {
+
+            ModelGUID("ModelGUID"),
+            Name("Name"),
+            Description("Description"),
+            grantableRoles("System.grantableRoles");
+
+        private final java.lang.String metaName;
+
+        MemberNames(final java.lang.String s) {
+            metaName = s;
+        }
+
+        @java.lang.Override
+        public java.lang.String toString() {
+            return metaName;
+        }
+    }
+
     private long id;
 
     private String name;
 
-    @Column(name = "name")
+    private List<DbUser> users;
+
+    @Column(name = DbUserRole.entityName + "/Name")
     public String getName() {
         return name;
     }
@@ -29,7 +50,6 @@ public class DbUserRole {
     }
 
     @Id
-    @Column(name = "id")
     public long getId() {
         return id;
     }
@@ -37,8 +57,6 @@ public class DbUserRole {
     public void setId(final long id) {
         this.id = id;
     }
-
-    private List<DbUser> users;
 
     @ManyToMany(mappedBy = "userRoles")
     public List<DbUser> getUsers() {

@@ -450,55 +450,32 @@ public class MendixHibernate {
                     if (MxHibernateConstants.CHILD_COLUMN.equals(attr)) {
                         return new Identifier("system$userroleid", true);
                     }
-                    throw new UnsupportedOperationException("failed");
+                } else if (DbUser.entityName.equals(moduleDotEntAssoc)) {
+                    if (DbUser.MemberNames.Name.toString().equals(attr)) {
+                        return new Identifier("name", true);
+                    }
+                } else if (DbUserRole.entityName.equals(moduleDotEntAssoc)) {
+                    if (DbUserRole.MemberNames.Name.toString().equals(attr)) {
+                        return new Identifier("name", true);
+                    }
+                } else if (DbAccount.entityName.equals(moduleDotEntAssoc)) {
+                    if (DbAccount.MemberNames.IsLocalUser.toString().equals(attr)) {
+                        return new Identifier("islocaluser", true);
+                    }
                 }
-            }
-
-            if (text.endsWith("_KEY")) {
+            } else if (text.endsWith("_KEY")) {
+                return logicalName;
+            } else if (text.endsWith("_ORDER")) {
+                return logicalName;
+            } else if (text.equals("element")) {
+                return logicalName;
+            } else if (mxhibernate.MxHibernateConstants.DISCRIMINATOR_COLUMN.equals(text)) {
+                return logicalName;
+            } else if (mxhibernate.MxHibernateConstants.ID_COLUMN.equals(text)) {
                 return logicalName;
             }
-            if (text.endsWith("_ORDER")) {
-                return logicalName;
-            }
-            if (text.equals("element")) {
-                return logicalName;
-            }
-            if (mxhibernate.MxHibernateConstants.SUBMETAOBJECTNAME.equals(text)) {
-                return logicalName;
-            }
-            if (text.endsWith("_DUMMYKEYCOL")) {
-                return logicalName;
-            }
-            if (text.endsWith("_DUMMYORDERCOL") || text.endsWith("_DUMMYELEMENTCOL") || text
-                .endsWith("_DUMMYKEYCOL")) {
-                return logicalName;
-            }
-            if ("".length() == 10) {
-                return logicalName;
-            }
-            if (DbUser.entityName.equals(Objects.requireNonNull(currentEntity))) {
-                if ("id".equals(text)) {
-                    return logicalName;
-                }
-                if ("name".equals(text)) {
-                    return logicalName;
-                }
-            } else if (DbUserRole.entityName.equals(Objects.requireNonNull(currentEntity))) {
-                if ("id".equals(text)) {
-                    return logicalName;
-                }
-                if ("name".equals(text)) {
-                    return logicalName;
-                }
-            } else if (DbAccount.entityName.equals(Objects.requireNonNull(currentEntity))) {
-                if ("islocaluser".equals(text)) {
-                    return logicalName;
-                }
-            }
-            throw new UnsupportedOperationException("failed");
+            throw new UnsupportedOperationException("toPhysicalColumnName failed: " + logicalName);
         }
-
-        // private ImplicitEntityNameSource currentEntity;
 
         @Override
         public Identifier determinePrimaryTableName(final ImplicitEntityNameSource source) {
