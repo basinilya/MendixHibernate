@@ -22,7 +22,19 @@ import org.hibernate.boot.MetadataSources;
 import org.hibernate.boot.SessionFactoryBuilder;
 import org.hibernate.boot.jaxb.Origin;
 import org.hibernate.boot.jaxb.SourceType;
+import org.hibernate.boot.jaxb.mapping.JaxbAttributes;
+import org.hibernate.boot.jaxb.mapping.JaxbBasic;
+import org.hibernate.boot.jaxb.mapping.JaxbColumn;
+import org.hibernate.boot.jaxb.mapping.JaxbDiscriminatorColumn;
+import org.hibernate.boot.jaxb.mapping.JaxbEmptyType;
+import org.hibernate.boot.jaxb.mapping.JaxbEntity;
 import org.hibernate.boot.jaxb.mapping.JaxbEntityMappings;
+import org.hibernate.boot.jaxb.mapping.JaxbId;
+import org.hibernate.boot.jaxb.mapping.JaxbInheritance;
+import org.hibernate.boot.jaxb.mapping.JaxbJoinTable;
+import org.hibernate.boot.jaxb.mapping.JaxbManyToMany;
+import org.hibernate.boot.jaxb.mapping.JaxbPersistenceUnitMetadata;
+import org.hibernate.boot.jaxb.mapping.JaxbTable;
 import org.hibernate.boot.jaxb.spi.Binding;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import org.hibernate.boot.registry.classloading.internal.ClassLoaderServiceImpl;
@@ -32,7 +44,9 @@ import org.hibernate.service.ServiceRegistry;
 
 import com.zaxxer.hikari.HikariDataSource;
 
+import jakarta.persistence.DiscriminatorType;
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.InheritanceType;
 import jakarta.persistence.TypedQuery;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
@@ -286,8 +300,7 @@ public class MendixHibernate {
         sources.addFile(new File("generated-mapping.xml"));
 
         if ("".length() == 10) {
-            // see HbmXmlTransformer
-            final JaxbEntityMappings ormRoot = new JaxbEntityMappings();
+            final JaxbEntityMappings ormRoot = generateEntityMappings();
             final Origin origin = new Origin(SourceType.OTHER, "mendix-metadata");
             final Binding<JaxbEntityMappings> binding = new Binding<>(ormRoot, origin);
             sources.addXmlBinding(binding);
@@ -297,6 +310,75 @@ public class MendixHibernate {
 
         final Metadata metadata = metadataBuilder.build();
         return metadata.getSessionFactoryBuilder();
+    }
+
+    private static JaxbEntityMappings generateEntityMappings() {
+        // see HbmXmlTransformer
+        final JaxbEntityMappings ormRoot = new JaxbEntityMappings();
+        ormRoot.setDescription("generated out of current Mendix metadata");
+
+        final JaxbPersistenceUnitMetadata metadata = new JaxbPersistenceUnitMetadata();
+        // JaxbPersistenceUnitDefaults defaults = new JaxbPersistenceUnitDefaults ();
+        // defaults.setDefaultAccess();
+        // metadata.setPersistenceUnitDefaults(defaults );
+        metadata.setXmlMappingMetadataComplete(new JaxbEmptyType());
+        ormRoot.setPersistenceUnitMetadata(metadata);
+
+        ormRoot.setPackage(DbUser.class.getPackageName());
+
+        ormRoot.setAttributeAccessor("property");
+
+        final JaxbEntity entity = new JaxbEntity();
+        entity.setName(DbUser.entityName);
+        entity.setClazz(DbUser.class.getSimpleName());
+        final JaxbTable table = new JaxbTable();
+        table.setName("system$user");
+        entity.setTable(table);
+
+        final JaxbInheritance inheritance = new JaxbInheritance();
+        inheritance.setStrategy(InheritanceType.JOINED);
+        entity.setInheritance(inheritance);
+
+        final JaxbDiscriminatorColumn discriminator = new JaxbDiscriminatorColumn();
+        discriminator.setName(MxHibernateConstants.DISCRIMINATOR_COLUMN);
+        discriminator.setDiscriminatorType(DiscriminatorType.STRING);
+        entity.setDiscriminatorColumn(discriminator);
+
+        final JaxbAttributes attributes = new JaxbAttributes();
+        {
+            final JaxbId id = new JaxbId();
+            id.setName(MxHibernateConstants.ID_COLUMN);
+            {
+                final JaxbColumn column = new JaxbColumn();
+                column.setName(MxHibernateConstants.ID_COLUMN);
+                id.setColumn(column);
+            }
+            attributes.getId().add(id);
+        }
+
+        {
+            final JaxbBasic attr = new JaxbBasic();
+            attr.setName(DbUser.MemberNames.Name.toString());
+            {
+                final JaxbColumn column = new JaxbColumn();
+                column.setName("name");
+                attr.setColumn(column);
+            }
+            attributes.getBasicAttributes().add(attr);
+        }
+
+        final JaxbManyToMany manyToMany = new JaxbManyToMany();
+        manyToMany.setName("userRoles");
+        final JaxbJoinTable joinTable = new JaxbJoinTable();
+        final aaa
+        manyToMany.setJoinTable(joinTable);
+        attributes.getManyToManyAttributes().add(manyToMany);
+
+        entity.setAttributes(attributes);
+
+        ormRoot.getEntities().add(entity);
+
+        return ormRoot;
     }
 
     /** mimic Mendix Database Connector module */

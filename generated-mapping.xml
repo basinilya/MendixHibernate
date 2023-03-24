@@ -10,21 +10,25 @@ xsi:schemaLocation="http://www.hibernate.org/xsd/orm/mapping https://hibernate.o
     </persistence-unit-metadata>
     <package>mxhibernate.entities</package>
     <attribute-accessor>property</attribute-accessor>
-    <entity name="System.User" class="DbUser" >
+    <entity name="System.User" class="DbUser" metadata-complete="true" >
         <table name="system$user"/>
         <inheritance strategy="JOINED"/>
         <discriminator-column name="submetaobjectname" discriminator-type="STRING"/>
         <attributes>
-            <id name="id"  >
+            <id name="id">
                 <column name="id"/>
             </id>
-            <basic name="name" />
+            <basic name="name">
+                <column name="name"/>
+            </basic>
             <many-to-many name="userRoles">
               <join-table name="system$userroles">
                 <join-column name="system$userid"/>
                 <inverse-join-column name="system$userroleid"/>
               </join-table>
             </many-to-many>
+            <!-- 
+             -->
         </attributes>
     </entity>
     <entity name="System.UserRole" class="DbUserRole">
@@ -34,7 +38,9 @@ xsi:schemaLocation="http://www.hibernate.org/xsd/orm/mapping https://hibernate.o
             <id name="id"  >
                 <column name="id"/>
             </id>
-            <basic name="name" />
+            <basic name="name">
+                <column name="name"/>
+            </basic>
 
             <many-to-many name="users"  mapped-by="userRoles"/>
         </attributes>
