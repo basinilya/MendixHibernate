@@ -1,6 +1,6 @@
 package mxhibernate.entities;
 
-import java.util.List;
+import java.util.Set;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.DiscriminatorColumn;
@@ -50,7 +50,7 @@ public class DbUser {
 
     private String name;
 
-    private List<DbUserRole> userRoles;
+    private Set<DbUserRole> userRoles;
 
     @Column(name = DbUser.entityName + "/Name")
     public String getName() {
@@ -77,11 +77,11 @@ public class DbUser {
                     name = "System.UserRoles/" + mxhibernate.MxHibernateConstants.PARENT_COLUMN),
             inverseJoinColumns = @JoinColumn(
                     name = "System.UserRoles/" + mxhibernate.MxHibernateConstants.CHILD_COLUMN))
-    public List<DbUserRole> getUserRoles() {
+    public Set<DbUserRole> getUserRoles() {
         return userRoles;
     }
 
-    public void setUserRoles(final List<DbUserRole> value) {
+    public void setUserRoles(final Set<DbUserRole> value) {
         this.userRoles = value;
     }
 }

@@ -1,0 +1,38 @@
+<!DOCTYPE hibernate-mapping PUBLIC
+    "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+    "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping package="mxhibernate.entities" default-access="property">
+    <class name="System.User" entity-name="DbUser" table="system$user">
+        <id name="id" column="id" type="long"/>
+
+        <discriminator column="submetaobjectname" type="string"/>
+
+        <set  name="userRoles" table="system$userroles"  >
+          <key column="system$userid" not-null="true" />
+          <many-to-many column="system$userroleid" class="DbUserRole"/>
+        </set>
+
+        <property name="name" type="string"/>
+
+    </class>
+
+    <joined-subclass entity-name="System.Account" table="administration$account" extends="DbUser">
+        <key />
+        <property name="isLocalUser" type="boolean"/>
+    </joined-subclass>
+
+    <class name="System.UserRole" entity-name="DbUserRole" table="system$userrole">
+        <id name="id" column="id" type="long"/>
+
+        <set name="users">
+          <key />
+          <many-to-many property-ref="userRoles" class="DbUser"/>
+        </set>
+
+        <property name="name" type="string"/>
+
+    </class>
+
+    
+</hibernate-mapping>

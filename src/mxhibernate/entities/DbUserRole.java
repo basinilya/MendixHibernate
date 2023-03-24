@@ -1,6 +1,6 @@
 package mxhibernate.entities;
 
-import java.util.List;
+import java.util.Set;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -38,7 +38,7 @@ public class DbUserRole {
 
     private String name;
 
-    private List<DbUser> users;
+    private Set<DbUser> users;
 
     @Column(name = DbUserRole.entityName + "/Name")
     public String getName() {
@@ -59,11 +59,11 @@ public class DbUserRole {
     }
 
     @ManyToMany(mappedBy = "userRoles")
-    public List<DbUser> getUsers() {
+    public Set<DbUser> getUsers() {
         return users;
     }
 
-    public void setUsers(final List<DbUser> value) {
+    public void setUsers(final Set<DbUser> value) {
         this.users = value;
     }
 
