@@ -3,36 +3,36 @@
     "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
 
 <hibernate-mapping package="mxhibernate.entities" default-access="property">
-    <class name="System.User" entity-name="DbUser" table="system$user">
+
+    <class entity-name="System.User" name="DbUser" table="system$user">
         <id name="id" column="id" type="long"/>
 
         <discriminator column="submetaobjectname" type="string"/>
 
-        <set  name="userRoles" table="system$userroles"  >
+        <set name="userRoles" table="system$userroles"  >
           <key column="system$userid" not-null="true" />
-          <many-to-many column="system$userroleid" class="DbUserRole"/>
+          <many-to-many column="system$userroleid" entity-name="System.UserRole"/>
         </set>
 
         <property name="name" type="string"/>
 
     </class>
 
-    <joined-subclass entity-name="System.Account" table="administration$account" extends="DbUser">
-        <key />
+    <joined-subclass entity-name="System.Account" name="DbAccount" table="administration$account" extends="System.User">
+        <key column="id" />
         <property name="isLocalUser" type="boolean"/>
     </joined-subclass>
-
-    <class name="System.UserRole" entity-name="DbUserRole" table="system$userrole">
+    
+    <class entity-name="System.UserRole" name="DbUserRole" table="system$userrole">
         <id name="id" column="id" type="long"/>
-
-        <set name="users">
-          <key />
-          <many-to-many property-ref="userRoles" class="DbUser"/>
-        </set>
 
         <property name="name" type="string"/>
 
+        <set name="users" inverse="true" >
+          <key />
+          <many-to-many property-ref="userRoles" entity-name="System.User"/>
+        </set>
+
     </class>
 
-    
 </hibernate-mapping>

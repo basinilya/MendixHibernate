@@ -2,15 +2,6 @@ package mxhibernate.entities;
 
 import java.util.Set;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Inheritance;
-import jakarta.persistence.InheritanceType;
-import jakarta.persistence.ManyToMany;
-
-@Entity(name = DbUserRole.entityName)
-@Inheritance(strategy = InheritanceType.JOINED)
 public class DbUserRole {
 
     public static final java.lang.String entityName = "System.Userrole";
@@ -40,7 +31,6 @@ public class DbUserRole {
 
     private Set<DbUser> users;
 
-    @Column(name = DbUserRole.entityName + "/Name")
     public String getName() {
         return name;
     }
@@ -49,7 +39,6 @@ public class DbUserRole {
         this.name = value;
     }
 
-    @Id
     public long getId() {
         return id;
     }
@@ -58,7 +47,6 @@ public class DbUserRole {
         this.id = id;
     }
 
-    @ManyToMany(mappedBy = "userRoles")
     public Set<DbUser> getUsers() {
         return users;
     }

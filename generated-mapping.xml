@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<entity-mappings
+xmlns="http://www.hibernate.org/xsd/orm/mapping"
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+xsi:schemaLocation="http://www.hibernate.org/xsd/orm/mapping https://hibernate.org/xsd/orm/mapping/mapping-3.1.0.xsd"
+>
+    <description>mapping.xml document auto-generated from legacy hbm.xml format via transformation - generated.hbm.xml</description>
+    <persistence-unit-metadata/>
+    <package>mxhibernate.entities</package>
+    <attribute-accessor>property</attribute-accessor>
+    <default-cascade>none</default-cascade>
+    <default-lazy>true</default-lazy>
+    <entity name="System.User" class="DbUser" access="PROPERTY" metadata-complete="true">
+        <table name="system$user"/>
+        <dynamic-insert>false</dynamic-insert>
+        <dynamic-update>false</dynamic-update>
+        <select-before-update>false</select-before-update>
+        <batch-size>-1</batch-size>
+        <mutable>true</mutable>
+        <optimistic-lock>version</optimistic-lock>
+        <inheritance strategy="JOINED"/>
+        <polymorphism>implicit</polymorphism>
+        <discriminator-column name="submetaobjectname" discriminator-type="STRING"/>
+        <attributes>
+            <id name="id" access="PROPERTY" attribute-accessor="property">
+                <column name="id"/>
+            </id>
+            <basic name="name" fetch="EAGER" optional="true" access="PROPERTY" attribute-accessor="property" optimistic-lock="true"/>
+            <many-to-many name="userRoles" access="PROPERTY" >
+              <join-table name="system$userroles">
+                <join-column name="system$userid"/>
+                <inverse-join-column name="system$userroleid"/>
+              </join-table>
+            </many-to-many>
+        </attributes>
+    </entity>
+    <entity name="System.UserRole" class="DbUserRole" access="PROPERTY" metadata-complete="true">
+        <table name="system$userrole"/>
+        <dynamic-insert>false</dynamic-insert>
+        <dynamic-update>false</dynamic-update>
+        <select-before-update>false</select-before-update>
+        <batch-size>-1</batch-size>
+        <mutable>true</mutable>
+        <optimistic-lock>version</optimistic-lock>
+        <inheritance strategy="JOINED"/>
+        <polymorphism>implicit</polymorphism>
+        <attributes>
+            <id name="id" access="PROPERTY" attribute-accessor="property">
+                <column name="id"/>
+            </id>
+            <basic name="name" fetch="EAGER" optional="true" access="PROPERTY" attribute-accessor="property" optimistic-lock="true"/>
+
+            <many-to-many name="users" access="PROPERTY" mapped-by="userRoles"/>
+        </attributes>
+    </entity>
+    <entity name="System.Account" class="DbAccount" access="PROPERTY" metadata-complete="true">
+        <table name="administration$account"/>
+        <primary-key-join-column name="id"/>
+        <dynamic-insert>false</dynamic-insert>
+        <dynamic-update>false</dynamic-update>
+        <select-before-update>false</select-before-update>
+        <batch-size>-1</batch-size>
+        <attributes>
+            <basic name="isLocalUser" fetch="EAGER" optional="true" access="PROPERTY" attribute-accessor="property" optimistic-lock="true">
+              <column name="islocaluser"/>
+            </basic>
+        </attributes>
+    </entity>
+</entity-mappings>

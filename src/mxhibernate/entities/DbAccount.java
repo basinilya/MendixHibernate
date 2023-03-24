@@ -1,9 +1,6 @@
 package mxhibernate.entities;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
 
-@Entity(name = DbAccount.entityName)
 public class DbAccount extends DbUser {
 
     public static final java.lang.String entityName = "Administration.Account";
@@ -40,7 +37,6 @@ public class DbAccount extends DbUser {
 
     private Boolean isLocalUser;
 
-    @Column(name = DbAccount.entityName + "/IsLocalUser")
     public Boolean getIsLocalUser() {
         return isLocalUser;
     }

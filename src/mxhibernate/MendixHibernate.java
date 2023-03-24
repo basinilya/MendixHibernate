@@ -25,6 +25,7 @@ import org.hibernate.boot.MetadataBuilder;
 import org.hibernate.boot.MetadataSources;
 import org.hibernate.boot.SessionFactoryBuilder;
 import org.hibernate.boot.archive.scan.spi.ScanEnvironment;
+import org.hibernate.boot.jaxb.mapping.JaxbEntityMappings;
 import org.hibernate.boot.model.naming.Identifier;
 import org.hibernate.boot.model.naming.PhysicalNamingStrategy;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
@@ -43,6 +44,10 @@ import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Root;
 import jakarta.persistence.metamodel.EntityType;
 import jakarta.persistence.metamodel.Metamodel;
+import jakarta.xml.bind.JAXBContext;
+import jakarta.xml.bind.JAXBException;
+import jakarta.xml.bind.Marshaller;
+import jakarta.xml.bind.PropertyException;
 import mxhibernate.entities.DbAccount;
 import mxhibernate.entities.DbUser;
 import mxhibernate.entities.DbUserRole;
@@ -55,14 +60,32 @@ public class MendixHibernate {
 
     private static String password;
 
+    private static JAXBContext jaxbContext;
+
+    public static JaxbEntityMappings jaxbEntityMappings;
+
     public static void main(final String[] args) throws Exception {
+        jaxbContext = JAXBContext.newInstance(JaxbEntityMappings.class);
+
         if (args.length == 0) {
             initLocalDbDetails();
         } else {
             initExplicitDbDetails(args[0], args[1], args[2]);
         }
 
+        try {
         executeWithMxDataSource(MendixHibernate::customLogic);
+        } finally {
+            // dumpconf(jaxbEntityMappings);
+        }
+    }
+
+    private static void dumpconf(final JaxbEntityMappings obj)
+                                                               throws JAXBException,
+                                                                   PropertyException {
+        final Marshaller marshaller = jaxbContext.createMarshaller();
+        marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
+        marshaller.marshal(obj, System.out);
     }
 
     private static void customLogic(final DataSource dataSource) {
@@ -77,7 +100,7 @@ public class MendixHibernate {
         }
     }
 
-    private static void customLogic0(final DataSource dataSource) throws SQLException {
+    private static void customLogic0(final DataSource dataSource) throws SQLException, IOException {
         final List<Long> userIds;
         try (Connection conn = dataSource.getConnection();) {
             userIds = logUsersWithPureJdbc(conn);
@@ -126,7 +149,8 @@ public class MendixHibernate {
     }
 
     private static void logUsersWithHibernate(final DataSource dataSource, final List<Long> userIds)
-                                                                                                     throws SQLException {
+                                                                                                     throws SQLException,
+                                                                                                         IOException {
         try (final SessionFactory sessionFactory = makeSessionFactoryBuilder(dataSource).build();) {
             final EntityManager entityManager = sessionFactory.createEntityManager();
             final Metamodel metamodel = entityManager.getMetamodel();
@@ -245,7 +269,8 @@ public class MendixHibernate {
         return "jdbc:hsqldb:" + serverUrl.toString();
     }
 
-    private static SessionFactoryBuilder makeSessionFactoryBuilder(final DataSource dataSource) {
+    private static SessionFactoryBuilder makeSessionFactoryBuilder(final DataSource dataSource)
+                                                                                                throws IOException {
 
         final ClassLoaderServiceImpl classLoaderService =
             new ClassLoaderServiceImpl(DbUser.class.getClassLoader());
@@ -253,6 +278,7 @@ public class MendixHibernate {
         final ServiceRegistry standardRegistry =
             new StandardServiceRegistryBuilder()
                 .applySetting(AvailableSettings.GLOBALLY_QUOTED_IDENTIFIERS, true)
+                // .applySetting(AvailableSettings.TRANSFORM_HBM_XML, true)
                 .applySetting(
                     AvailableSettings.HBM2DDL_AUTO,
                     org.hibernate.tool.schema.Action.VALIDATE.getExternalHbm2ddlName())
@@ -261,11 +287,13 @@ public class MendixHibernate {
                 .build();
 
         final MetadataSources sources = new MetadataSources(standardRegistry);
+        // sources.addFile(new File("generated.hbm.xml"));
+        sources.addFile(new File("generated-mapping.xml"));
 
         final MetadataBuilder metadataBuilder = sources.getMetadataBuilder();
 
         final MyNamingStrategy namingStrategy = new MyNamingStrategy();
-        metadataBuilder.applyPhysicalNamingStrategy(namingStrategy);
+        // metadataBuilder.applyPhysicalNamingStrategy(namingStrategy);
 
         metadataBuilder.applyScanEnvironment(new HiberNativeScanEnvironment());
 
