@@ -11,7 +11,6 @@ import jakarta.persistence.ManyToMany;
 
 @Entity(name = mxhibernate.entities.DbUserRole.entityName)
 @Inheritance(strategy = InheritanceType.JOINED)
-// @Table(name = "system$userrole")
 public class DbUserRole {
 
     public static final java.lang.String entityName = "System.Userrole";

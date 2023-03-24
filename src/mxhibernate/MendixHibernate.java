@@ -354,6 +354,8 @@ public class MendixHibernate {
 
         private String currentEntity;
 
+        private String currentTable;
+
         @Override
         public Identifier toPhysicalCatalogName(
                 final Identifier logicalName,
@@ -382,10 +384,10 @@ public class MendixHibernate {
                 final JdbcEnvironment jdbcEnvironment) {
             final String text = logicalName.getText();
             if (text.indexOf('.') != -1) {
-                // looks like the entity name
+                // looks like the entity name or an association name
                 currentEntity = text;
-                final String newtext = tableForMxEntity(text);
-                return new Identifier(newtext, true);
+                currentTable = tableForMxEntity(text);
+                return new Identifier(currentTable, true);
             } else if (text.indexOf('$') != -1) {
                 currentEntity = mxEntityForTable(text);
                 return logicalName;
@@ -402,14 +404,17 @@ public class MendixHibernate {
                     DbAccount.entityName,
                     "administration$account",
                     DbUserRole.entityName,
-                    "system$userrole");
+                    "system$userrole",
+                    DbUser.MemberNames.UserRoles.toString(),
+                    "system$userroles");
 
         private static final Map<String, String> ENTITIES_BY_TABLE =
             Stream
                 .concat(
                     TABLES_BY_ENTITY.entrySet().stream(),
                     Stream.of("system$userroles").map(x -> Map.entry("", x)))
-                .collect(Collectors.toMap(Map.Entry::getValue, Map.Entry::getKey));
+                .collect(
+                    Collectors.toMap(Map.Entry::getValue, Map.Entry::getKey, (prev, curr) -> curr));
 
         private static String tableForMxEntity(final String text) {
             return Objects
@@ -434,13 +439,31 @@ public class MendixHibernate {
                 final Identifier logicalName,
                 final JdbcEnvironment jdbcEnvironment) {
             final String text = logicalName.getText();
+            final String[] moduleDotEntAssocSlashAttr = text.split("/");
+            if (moduleDotEntAssocSlashAttr.length == 2) {
+                final String moduleDotEntAssoc = moduleDotEntAssocSlashAttr[0];
+                final String attr = moduleDotEntAssocSlashAttr[1];
+                if (DbUser.MemberNames.UserRoles.toString().equals(moduleDotEntAssoc)) {
+                    if (MxHibernateConstants.PARENT_COLUMN.equals(attr)) {
+                        return new Identifier("system$userid", true);
+                    }
+                    if (MxHibernateConstants.CHILD_COLUMN.equals(attr)) {
+                        return new Identifier("system$userroleid", true);
+                    }
+                    throw new UnsupportedOperationException("failed");
+                }
+            }
+
             if (text.endsWith("_KEY")) {
                 return logicalName;
             }
             if (text.endsWith("_ORDER")) {
                 return logicalName;
             }
-            if ("submetaobjectname".equals(text)) {
+            if (text.equals("element")) {
+                return logicalName;
+            }
+            if (mxhibernate.MxHibernateConstants.SUBMETAOBJECTNAME.equals(text)) {
                 return logicalName;
             }
             if (text.endsWith("_DUMMYKEYCOL")) {
@@ -450,7 +473,7 @@ public class MendixHibernate {
                 .endsWith("_DUMMYKEYCOL")) {
                 return logicalName;
             }
-            if ("".length() == 0) {
+            if ("".length() == 10) {
                 return logicalName;
             }
             if (DbUser.entityName.equals(Objects.requireNonNull(currentEntity))) {
@@ -465,6 +488,10 @@ public class MendixHibernate {
                     return logicalName;
                 }
                 if ("name".equals(text)) {
+                    return logicalName;
+                }
+            } else if (DbAccount.entityName.equals(Objects.requireNonNull(currentEntity))) {
+                if ("islocaluser".equals(text)) {
                     return logicalName;
                 }
             }
