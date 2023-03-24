@@ -1,10 +1,13 @@
 package mxhibernate.entities;
 
+import java.util.List;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Inheritance;
 import jakarta.persistence.InheritanceType;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.Table;
 
 @Entity(name = mxhibernate.entities.DbUserRole.entityName)
@@ -36,4 +39,16 @@ public class DbUserRole {
     public void setId(final long id) {
         this.id = id;
     }
+
+    private List<DbUser> users;
+
+    @ManyToMany(mappedBy = "userRoles")
+    public List<DbUser> getUsers() {
+        return users;
+    }
+
+    public void setUsers(final List<DbUser> value) {
+        this.users = value;
+    }
+
 }

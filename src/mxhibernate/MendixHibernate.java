@@ -11,7 +11,9 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.function.BiConsumer;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 import javax.sql.DataSource;
 
@@ -31,10 +33,14 @@ import com.zaxxer.hikari.HikariDataSource;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.TypedQuery;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Root;
 import jakarta.persistence.metamodel.EntityType;
 import jakarta.persistence.metamodel.Metamodel;
 import mxhibernate.entities.DbAccount;
 import mxhibernate.entities.DbUser;
+import mxhibernate.entities.DbUserRole;
 
 public class MendixHibernate {
 
@@ -121,7 +127,8 @@ public class MendixHibernate {
             final Metamodel metamodel = entityManager.getMetamodel();
             logKnownEntities(metamodel);
             logAllMxUsersWithIds(userIds, entityManager);
-            logAllMxUsersByQuery(entityManager);
+            logAllMxObjectsByQuery(entityManager, DbUser.class, MendixHibernate::logUser);
+            logAllMxObjectsByQuery(entityManager, DbUserRole.class, MendixHibernate::logUserRole);
         }
     }
 
@@ -131,7 +138,7 @@ public class MendixHibernate {
         System.out.println("Users by Ids:");
         for (final Long userId : userIds) {
             final DbUser obj = entityManager.find(DbUser.class, userId);
-            logObject(entityManager, obj);
+            logUser(entityManager, obj);
         }
         System.out.println();
     }
@@ -143,22 +150,56 @@ public class MendixHibernate {
         System.out.println();
     }
 
-    private static void logAllMxUsersByQuery(final EntityManager entityManager) {
-        System.out.println("Users by Query:");
-        final String entityName = getEntityName(entityManager, DbUser.class);
-        final TypedQuery<DbUser> query =
-            entityManager.createQuery("select a from `" + entityName + "` a", DbUser.class);
-        final List<DbUser> objs = query.getResultList();
-        for (final DbUser obj : objs) {
-            logObject(entityManager, obj);
+    private static <T> void logAllMxObjectsByQuery(
+            final EntityManager entityManager,
+            final Class<T> clazz,
+            final BiConsumer<EntityManager, T> logging) {
+        final String entityName = getEntityName(entityManager, clazz);
+        System.out.println("instances of " + entityName + " by Query:");
+
+        final List<T> objs;
+        if ("".length() == 0) {
+            final CriteriaBuilder builder = entityManager.getCriteriaBuilder();
+            final CriteriaQuery<T> criteria = builder.createQuery(clazz);
+            final Root<T> root = criteria.from(clazz);
+            criteria.select(root);
+            objs = entityManager.createQuery(criteria).getResultList();
+        } else {
+            final TypedQuery<T> query =
+                entityManager.createQuery("select a from `" + entityName + "` a", clazz);
+            objs = query.getResultList();
         }
+        for (final T obj : objs) {
+            logging.accept(entityManager, obj);
+        }
+        System.out.println();
     }
 
-    private static void logObject(final EntityManager entityManager, final DbUser obj) {
+    private static void logUserRole(final EntityManager entityManager, final DbUserRole obj) {
+        System.out
+            .println(
+                getObjEntityName(entityManager, obj) + ": " + obj.getId() + "," + obj.getName());
+        System.out
+            .println(
+                "    users: " + obj
+                    .getUsers()
+                    .stream()
+                    .map(DbUser::getName)
+                    .collect(Collectors.joining(",")));
+    }
+
+    private static void logUser(final EntityManager entityManager, final DbUser obj) {
         System.out
             .println(
                 getObjEntityName(entityManager, obj) + ": " + obj.getId() + "," + obj.getName()
                     + getDbAccountString(obj));
+        System.out
+            .println(
+                "    roles: " + obj
+                    .getUserRoles()
+                    .stream()
+                    .map(DbUserRole::getName)
+                    .collect(Collectors.joining(",")));
     }
 
     private static String getDbAccountString(final DbUser obj) {
@@ -171,7 +212,7 @@ public class MendixHibernate {
         return s;
     }
 
-    private static String getObjEntityName(final EntityManager entityManager, final DbUser obj) {
+    private static String getObjEntityName(final EntityManager entityManager, final Object obj) {
         return entityManager.getMetamodel().entity(obj.getClass()).getName();
     }
 

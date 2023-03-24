@@ -1,11 +1,16 @@
 package mxhibernate.entities;
 
+import java.util.List;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.DiscriminatorColumn;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Inheritance;
 import jakarta.persistence.InheritanceType;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.Table;
 
 @Entity(name = mxhibernate.entities.DbUser.entityName)
@@ -37,5 +42,20 @@ public class DbUser {
 
     public void setId(final long id) {
         this.id = id;
+    }
+
+    private List<DbUserRole> userRoles;
+
+    @ManyToMany
+    @JoinTable(
+            name = "system$userroles",
+            joinColumns = @JoinColumn(name = "system$userid"),
+            inverseJoinColumns = @JoinColumn(name = "system$userroleid"))
+    public List<DbUserRole> getUserRoles() {
+        return userRoles;
+    }
+
+    public void setUserRoles(final List<DbUserRole> value) {
+        this.userRoles = value;
     }
 }
