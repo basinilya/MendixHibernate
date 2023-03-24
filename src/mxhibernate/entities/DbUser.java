@@ -11,11 +11,10 @@ import jakarta.persistence.InheritanceType;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
-import jakarta.persistence.Table;
 
 @Entity(name = mxhibernate.entities.DbUser.entityName)
 @Inheritance(strategy = InheritanceType.JOINED)
-@Table(name = "system$user")
+// @Table(name = "system$user")
 @DiscriminatorColumn(name = "submetaobjectname")
 public class DbUser {
 
@@ -47,6 +46,9 @@ public class DbUser {
     private List<DbUserRole> userRoles;
 
     @ManyToMany
+    // @OrderColumn(name = "_DUMMYORDERCOL")
+    // @MapKeyColumn(name = "_DUMMYKEYCOL")
+    // @Column(name = "_DUMMYELEMENTCOL")
     @JoinTable(
             name = "system$userroles",
             joinColumns = @JoinColumn(name = "system$userid"),

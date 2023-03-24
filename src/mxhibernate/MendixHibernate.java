@@ -11,9 +11,12 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javax.sql.DataSource;
 
@@ -23,10 +26,33 @@ import org.hibernate.boot.MetadataBuilder;
 import org.hibernate.boot.MetadataSources;
 import org.hibernate.boot.SessionFactoryBuilder;
 import org.hibernate.boot.archive.scan.spi.ScanEnvironment;
+import org.hibernate.boot.model.naming.EntityNaming;
+import org.hibernate.boot.model.naming.Identifier;
+import org.hibernate.boot.model.naming.ImplicitAnyDiscriminatorColumnNameSource;
+import org.hibernate.boot.model.naming.ImplicitAnyKeyColumnNameSource;
+import org.hibernate.boot.model.naming.ImplicitBasicColumnNameSource;
+import org.hibernate.boot.model.naming.ImplicitCollectionTableNameSource;
+import org.hibernate.boot.model.naming.ImplicitDiscriminatorColumnNameSource;
+import org.hibernate.boot.model.naming.ImplicitEntityNameSource;
+import org.hibernate.boot.model.naming.ImplicitForeignKeyNameSource;
+import org.hibernate.boot.model.naming.ImplicitIdentifierColumnNameSource;
+import org.hibernate.boot.model.naming.ImplicitIndexColumnNameSource;
+import org.hibernate.boot.model.naming.ImplicitIndexNameSource;
+import org.hibernate.boot.model.naming.ImplicitJoinColumnNameSource;
+import org.hibernate.boot.model.naming.ImplicitJoinTableNameSource;
+import org.hibernate.boot.model.naming.ImplicitMapKeyColumnNameSource;
+import org.hibernate.boot.model.naming.ImplicitNamingStrategy;
+import org.hibernate.boot.model.naming.ImplicitPrimaryKeyJoinColumnNameSource;
+import org.hibernate.boot.model.naming.ImplicitTenantIdColumnNameSource;
+import org.hibernate.boot.model.naming.ImplicitUniqueKeyNameSource;
+import org.hibernate.boot.model.naming.PhysicalNamingStrategy;
+import org.hibernate.boot.model.source.spi.AttributePath;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import org.hibernate.boot.registry.classloading.internal.ClassLoaderServiceImpl;
 import org.hibernate.boot.registry.classloading.spi.ClassLoaderService;
+import org.hibernate.boot.spi.MetadataBuildingContext;
 import org.hibernate.cfg.AvailableSettings;
+import org.hibernate.engine.jdbc.env.spi.JdbcEnvironment;
 import org.hibernate.service.ServiceRegistry;
 
 import com.zaxxer.hikari.HikariDataSource;
@@ -250,6 +276,10 @@ public class MendixHibernate {
 
         final MetadataBuilder metadataBuilder = sources.getMetadataBuilder();
 
+        final MyNamingStrategy namingStrategy = new MyNamingStrategy();
+        // metadataBuilder.applyImplicitNamingStrategy(namingStrategy);
+        metadataBuilder.applyPhysicalNamingStrategy(namingStrategy);
+
         metadataBuilder.applyScanEnvironment(new HiberNativeScanEnvironment());
 
         final Metadata metadata = metadataBuilder.build();
@@ -318,4 +348,254 @@ public class MendixHibernate {
             return Collections.emptyList();
         }
     }
+
+    private static class MyNamingStrategy
+        implements PhysicalNamingStrategy, ImplicitNamingStrategy {
+
+        private String currentEntity;
+
+        @Override
+        public Identifier toPhysicalCatalogName(
+                final Identifier logicalName,
+                final JdbcEnvironment jdbcEnvironment) {
+            currentEntity = null;
+            if (logicalName == null) {
+                return logicalName;
+            }
+            throw new UnsupportedOperationException("failed");
+        }
+
+        @Override
+        public Identifier toPhysicalSchemaName(
+                final Identifier logicalName,
+                final JdbcEnvironment jdbcEnvironment) {
+            currentEntity = null;
+            if (logicalName == null) {
+                return logicalName;
+            }
+            throw new UnsupportedOperationException("failed");
+        }
+
+        @Override
+        public Identifier toPhysicalTableName(
+                final Identifier logicalName,
+                final JdbcEnvironment jdbcEnvironment) {
+            final String text = logicalName.getText();
+            if (text.indexOf('.') != -1) {
+                // looks like the entity name
+                currentEntity = text;
+                final String newtext = tableForMxEntity(text);
+                return new Identifier(newtext, true);
+            } else if (text.indexOf('$') != -1) {
+                currentEntity = mxEntityForTable(text);
+                return logicalName;
+            } else {
+                throw new IllegalArgumentException("Unexpected table name: " + text);
+            }
+        }
+
+        private static final Map<String, String> TABLES_BY_ENTITY =
+            Map
+                .of(
+                    DbUser.entityName,
+                    "system$user",
+                    DbAccount.entityName,
+                    "administration$account",
+                    DbUserRole.entityName,
+                    "system$userrole");
+
+        private static final Map<String, String> ENTITIES_BY_TABLE =
+            Stream
+                .concat(
+                    TABLES_BY_ENTITY.entrySet().stream(),
+                    Stream.of("system$userroles").map(x -> Map.entry("", x)))
+                .collect(Collectors.toMap(Map.Entry::getValue, Map.Entry::getKey));
+
+        private static String tableForMxEntity(final String text) {
+            return Objects
+                .requireNonNull(TABLES_BY_ENTITY.get(text), "unknown Mendix Entity: " + text);
+        }
+
+        private String mxEntityForTable(final String table) {
+            final String res =
+                Objects.requireNonNull(ENTITIES_BY_TABLE.get(table), "unknown table: " + table);
+            return res.isEmpty() ? currentEntity : res;
+        }
+
+        @Override
+        public Identifier toPhysicalSequenceName(
+                final Identifier logicalName,
+                final JdbcEnvironment jdbcEnvironment) {
+            throw new UnsupportedOperationException("failed");
+        }
+
+        @Override
+        public Identifier toPhysicalColumnName(
+                final Identifier logicalName,
+                final JdbcEnvironment jdbcEnvironment) {
+            final String text = logicalName.getText();
+            if (text.endsWith("_KEY")) {
+                return logicalName;
+            }
+            if (text.endsWith("_ORDER")) {
+                return logicalName;
+            }
+            if ("submetaobjectname".equals(text)) {
+                return logicalName;
+            }
+            if (text.endsWith("_DUMMYKEYCOL")) {
+                return logicalName;
+            }
+            if (text.endsWith("_DUMMYORDERCOL") || text.endsWith("_DUMMYELEMENTCOL") || text
+                .endsWith("_DUMMYKEYCOL")) {
+                return logicalName;
+            }
+            if ("".length() == 0) {
+                return logicalName;
+            }
+            if (DbUser.entityName.equals(Objects.requireNonNull(currentEntity))) {
+                if ("id".equals(text)) {
+                    return logicalName;
+                }
+                if ("name".equals(text)) {
+                    return logicalName;
+                }
+            } else if (DbUserRole.entityName.equals(Objects.requireNonNull(currentEntity))) {
+                if ("id".equals(text)) {
+                    return logicalName;
+                }
+                if ("name".equals(text)) {
+                    return logicalName;
+                }
+            }
+            throw new UnsupportedOperationException("failed");
+        }
+
+        // private ImplicitEntityNameSource currentEntity;
+
+        @Override
+        public Identifier determinePrimaryTableName(final ImplicitEntityNameSource source) {
+            Identifier res = null;
+            currentEntity = null;
+            final EntityNaming enaming = source.getEntityNaming();
+            final String jpaEname = enaming.getJpaEntityName();
+            if (DbUser.entityName.equals(jpaEname)) {
+                res = new Identifier("bookplanningmain$edition", true);
+            } else if (DbUserRole.entityName.equals(jpaEname)) {
+                res = new Identifier("bookplanningmain$rendition", true);
+            } else {
+                throw new UnsupportedOperationException(
+                    "failed " + source.getEntityNaming().getClassName());
+            }
+            currentEntity = jpaEname;
+            return res;
+        }
+
+        @Override
+        public Identifier determineJoinTableName(final ImplicitJoinTableNameSource source) {
+            currentEntity = null;
+            throw new UnsupportedOperationException("failed 1");
+        }
+
+        @Override
+        public Identifier determineCollectionTableName(
+                final ImplicitCollectionTableNameSource source) {
+            currentEntity = null;
+            throw new UnsupportedOperationException("failed 2");
+        }
+
+        @Override
+        public Identifier determineDiscriminatorColumnName(
+                final ImplicitDiscriminatorColumnNameSource source) {
+            throw new UnsupportedOperationException("failed 3");
+        }
+
+        @Override
+        public Identifier determineTenantIdColumnName(
+                final ImplicitTenantIdColumnNameSource source) {
+            throw new UnsupportedOperationException("failed 4");
+        }
+
+        @Override
+        public Identifier determineIdentifierColumnName(
+                final ImplicitIdentifierColumnNameSource source) {
+            throw new UnsupportedOperationException("failed 5");
+
+        }
+
+        @Override
+        public Identifier determineBasicColumnName(final ImplicitBasicColumnNameSource source) {
+            final AttributePath attrPath = source.getAttributePath();
+            final MetadataBuildingContext ctx = source.getBuildingContext();
+            final String prop = attrPath.getProperty();
+            final AttributePath parent = attrPath.getParent();
+            final String contributor = ctx.getCurrentContributorName();
+            if (DbUser.entityName.equals(Objects.requireNonNull(currentEntity))) {
+                if ("id".equals(prop)) {
+                    return new Identifier("id", true);
+                }
+                if ("subtitle".equals(prop)) {
+                    return new Identifier("subtitle", true);
+                }
+            } else if (DbUserRole.entityName.equals(Objects.requireNonNull(currentEntity))) {
+                if ("id".equals(prop)) {
+                    return new Identifier("id", true);
+                }
+                if ("isbn".equals(prop)) {
+                    return new Identifier("isbn3", true);
+                }
+            }
+            throw new UnsupportedOperationException("failed 6");
+        }
+
+        @Override
+        public Identifier determineJoinColumnName(final ImplicitJoinColumnNameSource source) {
+            throw new UnsupportedOperationException("failed 7");
+        }
+
+        @Override
+        public Identifier determinePrimaryKeyJoinColumnName(
+                final ImplicitPrimaryKeyJoinColumnNameSource source) {
+            throw new UnsupportedOperationException("failed 8");
+        }
+
+        @Override
+        public Identifier determineAnyDiscriminatorColumnName(
+                final ImplicitAnyDiscriminatorColumnNameSource source) {
+            throw new UnsupportedOperationException("failed 9");
+
+        }
+
+        @Override
+        public Identifier determineAnyKeyColumnName(final ImplicitAnyKeyColumnNameSource source) {
+            throw new UnsupportedOperationException("failed 10");
+        }
+
+        @Override
+        public Identifier determineMapKeyColumnName(final ImplicitMapKeyColumnNameSource source) {
+            throw new UnsupportedOperationException("failed 11");
+        }
+
+        @Override
+        public Identifier determineListIndexColumnName(final ImplicitIndexColumnNameSource source) {
+            throw new UnsupportedOperationException("failed 12");
+        }
+
+        @Override
+        public Identifier determineForeignKeyName(final ImplicitForeignKeyNameSource source) {
+            throw new UnsupportedOperationException("failed 13");
+        }
+
+        @Override
+        public Identifier determineUniqueKeyName(final ImplicitUniqueKeyNameSource source) {
+            throw new UnsupportedOperationException("failed 14");
+        }
+
+        @Override
+        public Identifier determineIndexName(final ImplicitIndexNameSource source) {
+            throw new UnsupportedOperationException("failed 15");
+        }
+
+    }
+
 }
