@@ -35,13 +35,13 @@ public class DbAccount extends DbUser {
         }
     }
 
-    private Boolean isLocalUser;
+    private Boolean isLocalUser1;
 
     public Boolean getIsLocalUser() {
-        return isLocalUser;
+        return isLocalUser1;
     }
 
     public void setIsLocalUser(final Boolean isLocalUser) {
-        this.isLocalUser = isLocalUser;
+        this.isLocalUser1 = isLocalUser;
     }
 }

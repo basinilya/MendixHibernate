@@ -2,17 +2,13 @@ package mxhibernate;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.URL;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
-import java.util.Map;
-import java.util.Objects;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
@@ -24,15 +20,11 @@ import org.hibernate.boot.Metadata;
 import org.hibernate.boot.MetadataBuilder;
 import org.hibernate.boot.MetadataSources;
 import org.hibernate.boot.SessionFactoryBuilder;
-import org.hibernate.boot.archive.scan.spi.ScanEnvironment;
 import org.hibernate.boot.jaxb.mapping.JaxbEntityMappings;
-import org.hibernate.boot.model.naming.Identifier;
-import org.hibernate.boot.model.naming.PhysicalNamingStrategy;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import org.hibernate.boot.registry.classloading.internal.ClassLoaderServiceImpl;
 import org.hibernate.boot.registry.classloading.spi.ClassLoaderService;
 import org.hibernate.cfg.AvailableSettings;
-import org.hibernate.engine.jdbc.env.spi.JdbcEnvironment;
 import org.hibernate.service.ServiceRegistry;
 
 import com.zaxxer.hikari.HikariDataSource;
@@ -278,7 +270,6 @@ public class MendixHibernate {
         final ServiceRegistry standardRegistry =
             new StandardServiceRegistryBuilder()
                 .applySetting(AvailableSettings.GLOBALLY_QUOTED_IDENTIFIERS, true)
-                // .applySetting(AvailableSettings.TRANSFORM_HBM_XML, true)
                 .applySetting(
                     AvailableSettings.HBM2DDL_AUTO,
                     org.hibernate.tool.schema.Action.VALIDATE.getExternalHbm2ddlName())
@@ -291,11 +282,6 @@ public class MendixHibernate {
         sources.addFile(new File("generated-mapping.xml"));
 
         final MetadataBuilder metadataBuilder = sources.getMetadataBuilder();
-
-        final MyNamingStrategy namingStrategy = new MyNamingStrategy();
-        // metadataBuilder.applyPhysicalNamingStrategy(namingStrategy);
-
-        metadataBuilder.applyScanEnvironment(new HiberNativeScanEnvironment());
 
         final Metadata metadata = metadataBuilder.build();
         return metadata.getSessionFactoryBuilder();
@@ -337,137 +323,6 @@ public class MendixHibernate {
         jdbcUrl = getLocalDbJdbcUrl();
         user = "SA";
         password = "";
-    }
-
-    /** required to scan the packages in native Hibernate (no JPA) */
-    private static class HiberNativeScanEnvironment implements ScanEnvironment {
-
-        @Override
-        public URL getRootUrl() {
-            return null;
-        }
-
-        @Override
-        public List<URL> getNonRootUrls() {
-            final URL url = DbUser.class.getResource("");
-            return Collections.singletonList(url);
-        }
-
-        @Override
-        public List<String> getExplicitlyListedClassNames() {
-            return Collections.emptyList();
-        }
-
-        @Override
-        public List<String> getExplicitlyListedMappingFiles() {
-            return Collections.emptyList();
-        }
-    }
-
-    private static class MyNamingStrategy
-        implements PhysicalNamingStrategy {
-
-        @Override
-        public Identifier toPhysicalCatalogName(
-                final Identifier logicalName,
-                final JdbcEnvironment jdbcEnvironment) {
-            if (logicalName == null) {
-                return logicalName;
-            }
-            throw new UnsupportedOperationException("failed");
-        }
-
-        @Override
-        public Identifier toPhysicalSchemaName(
-                final Identifier logicalName,
-                final JdbcEnvironment jdbcEnvironment) {
-            if (logicalName == null) {
-                return logicalName;
-            }
-            throw new UnsupportedOperationException("failed");
-        }
-
-        @Override
-        public Identifier toPhysicalTableName(
-                final Identifier logicalName,
-                final JdbcEnvironment jdbcEnvironment) {
-            final String text = logicalName.getText();
-            if (text.indexOf('.') != -1) {
-                // looks like the entity name or an association name
-                final String table = tableForMxEntity(text);
-                return new Identifier(table, true);
-            } else {
-                throw new IllegalArgumentException("toPhysicalTableName failed: " + logicalName);
-            }
-        }
-
-        private static final Map<String, String> TABLES_BY_ENTITY =
-            Map
-                .of(
-                    DbUser.entityName,
-                    "system$user",
-                    DbAccount.entityName,
-                    "administration$account",
-                    DbUserRole.entityName,
-                    "system$userrole",
-                    DbUser.MemberNames.UserRoles.toString(),
-                    "system$userroles");
-
-        private static String tableForMxEntity(final String text) {
-            return Objects
-                .requireNonNull(TABLES_BY_ENTITY.get(text), "unknown Mendix Entity: " + text);
-        }
-
-        @Override
-        public Identifier toPhysicalSequenceName(
-                final Identifier logicalName,
-                final JdbcEnvironment jdbcEnvironment) {
-            throw new UnsupportedOperationException(
-                "toPhysicalSequenceName failed: " + logicalName);
-        }
-
-        @Override
-        public Identifier toPhysicalColumnName(
-                final Identifier logicalName,
-                final JdbcEnvironment jdbcEnvironment) {
-            final String text = logicalName.getText();
-            final String[] moduleDotEntAssocSlashAttr = text.split("/");
-            if (moduleDotEntAssocSlashAttr.length == 2) {
-                final String moduleDotEntAssoc = moduleDotEntAssocSlashAttr[0];
-                final String attr = moduleDotEntAssocSlashAttr[1];
-                if (DbUser.MemberNames.UserRoles.toString().equals(moduleDotEntAssoc)) {
-                    if (MxHibernateConstants.PARENT_COLUMN.equals(attr)) {
-                        return new Identifier("system$userid", true);
-                    }
-                    if (MxHibernateConstants.CHILD_COLUMN.equals(attr)) {
-                        return new Identifier("system$userroleid", true);
-                    }
-                } else if (DbUser.entityName.equals(moduleDotEntAssoc)) {
-                    if (DbUser.MemberNames.Name.toString().equals(attr)) {
-                        return new Identifier("name", true);
-                    }
-                } else if (DbUserRole.entityName.equals(moduleDotEntAssoc)) {
-                    if (DbUserRole.MemberNames.Name.toString().equals(attr)) {
-                        return new Identifier("name", true);
-                    }
-                } else if (DbAccount.entityName.equals(moduleDotEntAssoc)) {
-                    if (DbAccount.MemberNames.IsLocalUser.toString().equals(attr)) {
-                        return new Identifier("islocaluser", true);
-                    }
-                }
-            } else if (text.endsWith("_KEY")) {
-                return logicalName;
-            } else if (text.endsWith("_ORDER")) {
-                return logicalName;
-            } else if (text.equals("element")) {
-                return logicalName;
-            } else if (mxhibernate.MxHibernateConstants.DISCRIMINATOR_COLUMN.equals(text)) {
-                return logicalName;
-            } else if (mxhibernate.MxHibernateConstants.ID_COLUMN.equals(text)) {
-                return logicalName;
-            }
-            throw new UnsupportedOperationException("toPhysicalColumnName failed: " + logicalName);
-        }
     }
 
 }

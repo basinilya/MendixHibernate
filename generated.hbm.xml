@@ -18,7 +18,7 @@
 
     </class>
 
-    <joined-subclass entity-name="System.Account" name="DbAccount" table="administration$account" extends="System.User">
+    <joined-subclass entity-name="Administration.Account" name="DbAccount" table="administration$account" extends="System.User">
         <key column="id" />
         <property name="isLocalUser" type="boolean"/>
     </joined-subclass>
