@@ -9,7 +9,7 @@ xsi:schemaLocation="http://www.hibernate.org/xsd/orm/mapping https://hibernate.o
         <xml-mapping-metadata-complete />
     </persistence-unit-metadata>
     <package>mxhibernate.entities</package>
-    <attribute-accessor>property</attribute-accessor>
+    <access>PROPERTY</access>
     <entity name="System.User" class="DbUser">
         <table name="system$user"/>
         <inheritance strategy="JOINED"/>
@@ -36,8 +36,8 @@ xsi:schemaLocation="http://www.hibernate.org/xsd/orm/mapping https://hibernate.o
             <id name="id"  >
                 <column name="id"/>
             </id>
-            <basic name="name2">
-                <column name="name2"/>
+            <basic name="name">
+                <column name="name"/>
             </basic>
 
             <many-to-many name="users"  mapped-by="userRoles"/>

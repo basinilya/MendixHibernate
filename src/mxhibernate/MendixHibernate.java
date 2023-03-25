@@ -1,5 +1,6 @@
 package mxhibernate;
 
+import java.beans.Introspector;
 import java.io.File;
 import java.io.IOException;
 import java.sql.Connection;
@@ -9,8 +10,11 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import javax.sql.DataSource;
@@ -19,7 +23,6 @@ import org.hibernate.SessionFactory;
 import org.hibernate.boot.Metadata;
 import org.hibernate.boot.MetadataBuilder;
 import org.hibernate.boot.MetadataSources;
-import org.hibernate.boot.SessionFactoryBuilder;
 import org.hibernate.boot.jaxb.Origin;
 import org.hibernate.boot.jaxb.SourceType;
 import org.hibernate.boot.jaxb.mapping.JaxbAttributes;
@@ -45,6 +48,7 @@ import org.hibernate.service.ServiceRegistry;
 
 import com.zaxxer.hikari.HikariDataSource;
 
+import jakarta.persistence.AccessType;
 import jakarta.persistence.DiscriminatorType;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.InheritanceType;
@@ -161,7 +165,7 @@ public class MendixHibernate {
     private static void logUsersWithHibernate(final DataSource dataSource, final List<Long> userIds)
                                                                                                      throws SQLException,
                                                                                                          IOException {
-        try (final SessionFactory sessionFactory = makeSessionFactoryBuilder(dataSource).build();) {
+        try (final SessionFactory sessionFactory = makeSessionFactoryBuilder(dataSource);) {
             final EntityManager entityManager = sessionFactory.createEntityManager();
             final Metamodel metamodel = entityManager.getMetamodel();
             logKnownEntities(metamodel);
@@ -279,8 +283,8 @@ public class MendixHibernate {
         return "jdbc:hsqldb:" + serverUrl.toString();
     }
 
-    private static SessionFactoryBuilder makeSessionFactoryBuilder(final DataSource dataSource)
-                                                                                                throws IOException {
+    private static SessionFactory makeSessionFactoryBuilder(final DataSource dataSource)
+                                                                                         throws IOException {
 
         final ClassLoaderServiceImpl classLoaderService =
             new ClassLoaderServiceImpl(DbUser.class.getClassLoader());
@@ -298,19 +302,49 @@ public class MendixHibernate {
 
         final MetadataSources sources = new MetadataSources(standardRegistry);
         // sources.addFile(new File("generated.hbm.xml"));
-        sources.addFile(new File("generated-mapping.xml"));
-
-        if ("".length() == 10) {
-            final JaxbEntityMappings ormRoot = generateEntityMappings();
-            final Origin origin = new Origin(SourceType.OTHER, "mendix-metadata");
-            final Binding<JaxbEntityMappings> binding = new Binding<>(ormRoot, origin);
-            sources.addXmlBinding(binding);
-        }
+        // sources.addFile(new File("generated-mapping.xml"));
+        addGeneratedMappings(sources);
 
         final MetadataBuilder metadataBuilder = sources.getMetadataBuilder();
-
         final Metadata metadata = metadataBuilder.build();
-        return metadata.getSessionFactoryBuilder();
+        final SessionFactory sessionFactory = metadata.getSessionFactoryBuilder().build();
+        validateAttributeResolvation(sources, sessionFactory);
+
+        return sessionFactory;
+    }
+
+    private static void validateAttributeResolvation(
+            final MetadataSources sources,
+            final SessionFactory sessionFactory) throws IllegalArgumentException {
+        {
+            final Map<String, EntityType<?>> entitiesByName =
+                sessionFactory
+                    .getMetamodel()
+                    .getEntities()
+                    .stream()
+                    .collect(Collectors.toMap(EntityType::getName, Function.identity()));
+            sources
+                .getXmlBindings()
+                .stream()
+                .map(binding -> (JaxbEntityMappings) binding.getRoot())
+                .forEach(ormRoot -> {
+                    ormRoot.getEntities().forEach(xmlEntity -> {
+                        final String entityName = xmlEntity.getName();
+                        final EntityType<?> entity = entitiesByName.get(entityName);
+                        xmlEntity.getAttributes().getBasicAttributes().forEach(xmlAttribute -> {
+                            final String xmlAttributeName = xmlAttribute.getName();
+                            Objects.requireNonNull(entity.getAttribute(xmlAttributeName));
+                        });
+                    });
+                });
+        }
+    }
+
+    private static void addGeneratedMappings(final MetadataSources sources) {
+        final JaxbEntityMappings ormRoot = generateEntityMappings();
+        final Origin origin = new Origin(SourceType.OTHER, "mendix-metadata");
+        final Binding<JaxbEntityMappings> binding = new Binding<>(ormRoot, origin);
+        sources.addXmlBinding(binding);
     }
 
     private static JaxbEntityMappings generateEntityMappings() {
@@ -327,7 +361,7 @@ public class MendixHibernate {
 
         ormRoot.setPackage(DbUser.class.getPackageName());
 
-        ormRoot.setAttributeAccessor("property");
+        ormRoot.setAccess(AccessType.PROPERTY);
 
         {
             final JaxbEntity entity = new JaxbEntity();
@@ -360,7 +394,7 @@ public class MendixHibernate {
 
             {
                 final JaxbBasic attr = new JaxbBasic();
-                attr.setName(DbUser.MemberNames.Name.toString());
+                attr.setName(Introspector.decapitalize(DbUser.MemberNames.Name.toString()));
                 {
                     final JaxbColumn column = new JaxbColumn();
                     column.setName("name");
@@ -413,7 +447,7 @@ public class MendixHibernate {
 
             {
                 final JaxbBasic attr = new JaxbBasic();
-                attr.setName(DbUserRole.MemberNames.Name.toString());
+                attr.setName(Introspector.decapitalize(DbUserRole.MemberNames.Name.toString()));
                 {
                     final JaxbColumn column = new JaxbColumn();
                     column.setName("name");
@@ -421,20 +455,39 @@ public class MendixHibernate {
                 }
                 attributes.getBasicAttributes().add(attr);
             }
-            // aaa
 
             final JaxbManyToMany manyToMany = new JaxbManyToMany();
-            manyToMany.setName("userRoles");
-            final JaxbJoinTable joinTable = new JaxbJoinTable();
-            joinTable.setName("system$userroles");
-            final JaxbJoinColumn joinColumn = new JaxbJoinColumn();
-            joinColumn.setName("system$userid");
-            joinTable.getJoinColumn().add(joinColumn);
-            final JaxbJoinColumn inverseJoinColumn = new JaxbJoinColumn();
-            inverseJoinColumn.setName("system$userroleid");
-            joinTable.getInverseJoinColumn().add(inverseJoinColumn);
-            manyToMany.setJoinTable(joinTable);
+            manyToMany.setName("users");
+            manyToMany.setMappedBy("userRoles");
             attributes.getManyToManyAttributes().add(manyToMany);
+
+            entity.setAttributes(attributes);
+
+            ormRoot.getEntities().add(entity);
+        }
+
+        {
+            final JaxbEntity entity = new JaxbEntity();
+            entity.setName(DbAccount.entityName);
+            entity.setClazz(DbAccount.class.getSimpleName());
+            final JaxbTable table = new JaxbTable();
+            table.setName("administration$account");
+            entity.setTable(table);
+
+            final JaxbAttributes attributes = new JaxbAttributes();
+
+            {
+                final JaxbBasic attr = new JaxbBasic();
+                attr
+                    .setName(
+                        Introspector.decapitalize(DbAccount.MemberNames.IsLocalUser.toString()));
+                {
+                    final JaxbColumn column = new JaxbColumn();
+                    column.setName("islocaluser");
+                    attr.setColumn(column);
+                }
+                attributes.getBasicAttributes().add(attr);
+            }
 
             entity.setAttributes(attributes);
 
