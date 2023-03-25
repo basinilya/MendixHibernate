@@ -33,10 +33,10 @@ public class DbUserReportInfo
     public void setHash(java.lang.String val) {
     }
 
-    public mxhibernate.genentities.system.DbUserType getUserType() {
+    public java.lang.String getUserType() {
         return null;
     }
 
-    public void setUserType(mxhibernate.genentities.system.DbUserType val) {
+    public void setUserType(java.lang.String val) {
     }
 }

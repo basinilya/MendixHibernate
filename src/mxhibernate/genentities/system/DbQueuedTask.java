@@ -61,11 +61,11 @@ public class DbQueuedTask
     public void setContextData(java.lang.String val) {
     }
 
-    public mxhibernate.genentities.system.DbContextType getContextType() {
+    public java.lang.String getContextType() {
         return null;
     }
 
-    public void setContextType(mxhibernate.genentities.system.DbContextType val) {
+    public void setContextType(java.lang.String val) {
     }
 
     public java.util.Date getCreated() {
@@ -138,11 +138,11 @@ public class DbQueuedTask
     public void setStarted(java.util.Date val) {
     }
 
-    public mxhibernate.genentities.system.DbQueueTaskStatus getStatus() {
+    public java.lang.String getStatus() {
         return null;
     }
 
-    public void setStatus(mxhibernate.genentities.system.DbQueueTaskStatus val) {
+    public void setStatus(java.lang.String val) {
     }
 
     public java.lang.Long getThreadId() {

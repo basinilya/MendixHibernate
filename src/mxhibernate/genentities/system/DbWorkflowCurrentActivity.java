@@ -27,10 +27,10 @@ public class DbWorkflowCurrentActivity
     }
 
 
-    public mxhibernate.genentities.system.DbWorkflowCurrentActivityAction getAction() {
+    public java.lang.String getAction() {
         return null;
     }
 
-    public void setAction(mxhibernate.genentities.system.DbWorkflowCurrentActivityAction val) {
+    public void setAction(java.lang.String val) {
     }
 }

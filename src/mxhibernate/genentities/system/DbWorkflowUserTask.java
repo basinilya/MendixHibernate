@@ -76,10 +76,10 @@ public class DbWorkflowUserTask
     public void setStartTime(java.util.Date val) {
     }
 
-    public mxhibernate.genentities.system.DbWorkflowUserTaskState getState() {
+    public java.lang.String getState() {
         return null;
     }
 
-    public void setState(mxhibernate.genentities.system.DbWorkflowUserTaskState val) {
+    public void setState(java.lang.String val) {
     }
 }

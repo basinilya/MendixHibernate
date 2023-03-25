@@ -360,10 +360,8 @@ public class GenerateMendixJdbcProxies {
                 continue;
             }
 
-            final String newPropClassName =
-                propIsProxy
-                    ? StringUtils.join(convertProxyClassName(propClassName), '.')
-                    : propClassName;
+            // no enums
+            final String newPropClassName = propIsProxy ? "java.lang.String" : propClassName;
 
             final String baseName = StringUtils.capitalize(propName);
             final String getterName = "get" + baseName;

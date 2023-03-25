@@ -57,10 +57,10 @@ public class DbScheduledEventInformation
     public void setStartTime(java.util.Date val) {
     }
 
-    public mxhibernate.genentities.system.DbEventStatus getStatus() {
+    public java.lang.String getStatus() {
         return null;
     }
 
-    public void setStatus(mxhibernate.genentities.system.DbEventStatus val) {
+    public void setStatus(java.lang.String val) {
     }
 }

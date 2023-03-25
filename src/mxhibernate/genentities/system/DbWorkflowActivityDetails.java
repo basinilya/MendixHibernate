@@ -41,11 +41,11 @@ public class DbWorkflowActivityDetails
     public void setActivityId(java.lang.String val) {
     }
 
-    public mxhibernate.genentities.system.DbWorkflowActivityType getActivityType() {
+    public java.lang.String getActivityType() {
         return null;
     }
 
-    public void setActivityType(mxhibernate.genentities.system.DbWorkflowActivityType val) {
+    public void setActivityType(java.lang.String val) {
     }
 
     public java.lang.Boolean getExistsInCurrentVersion() {

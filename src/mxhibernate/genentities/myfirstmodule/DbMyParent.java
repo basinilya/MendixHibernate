@@ -27,10 +27,10 @@ public class DbMyParent
     }
 
 
-    public mxhibernate.genentities.myfirstmodule.DbEnum_eration getAttribute() {
+    public java.lang.String getAttribute() {
         return null;
     }
 
-    public void setAttribute(mxhibernate.genentities.myfirstmodule.DbEnum_eration val) {
+    public void setAttribute(java.lang.String val) {
     }
 }
