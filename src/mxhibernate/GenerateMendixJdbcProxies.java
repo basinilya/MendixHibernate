@@ -10,6 +10,9 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.nio.charset.StandardCharsets;
@@ -19,9 +22,14 @@ import java.nio.file.Path;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.file.PathUtils;
@@ -32,11 +40,16 @@ public class GenerateMendixJdbcProxies {
 
     private static final String GENENTITIES_PACKAGE = "mxhibernate.genentities";
 
+    private static final Map<String, Map<String, String>> assocsByEntityName = new HashMap<>();
+
     private GenerateMendixJdbcProxies() {
         //
     }
 
     public static void main(final String[] args) throws Exception {
+
+        // extracted(X.class);
+        // System.exit(0);
 
         final File fBpeSources0 = new File("./src").getAbsoluteFile();
         final File fBpeSources = new File(fBpeSources0, GENENTITIES_PACKAGE.replace('.', '/'));
@@ -58,10 +71,132 @@ public class GenerateMendixJdbcProxies {
         final URL[] urls = new URL[] { bpClasses };
         try (URLClassLoader urlClassLoader = new URLClassLoader(urls);) {
             for (final String proxyClassName : proxyClassNames) {
+                collectAssociations(fBpeSources0, urlClassLoader, proxyClassName);
+            }
+            System.out.println(assocsByEntityName);
+            System.exit(0);
+            for (final String proxyClassName : proxyClassNames) {
                 generateJavaFile(fBpeSources0, urlClassLoader, proxyClassName);
             }
         }
         System.out.println("done");
+    }
+
+    private static void collectAssociations(
+            final File fBpeSources0,
+            final URLClassLoader urlClassLoader,
+            final String proxyClassName)
+                                         throws ClassNotFoundException,
+                                             NoSuchFieldException,
+                                             IllegalAccessException,
+                                             IOException,
+                                             IntrospectionException {
+        final Class<?> proxyClass = urlClassLoader.loadClass(proxyClassName);
+
+        final boolean isEnum = proxyClass.isEnum();
+        if (isEnum) {
+            return;
+        }
+
+        extracted(urlClassLoader, proxyClass);
+
+    }
+
+    private static void extracted(final URLClassLoader urlClassLoader, final Class<?> proxyClass)
+                                                             throws IntrospectionException,
+                                                                 NoSuchFieldException,
+                                                                 IllegalArgumentException,
+                                                                 IllegalAccessException,
+                                                                 SecurityException {
+
+        if (proxyClass.getName().startsWith("system") || proxyClass
+            .getName()
+            .startsWith("administration")) {
+            return;
+        }
+
+        final HashMap<String, String> assocs = new HashMap<>();
+        assocsByEntityName.put((String) proxyClass.getField("entityName").get(null), assocs);
+
+        final Class<Enum<?>> memberNamesClass =
+            getMemberNamesClass(urlClassLoader, proxyClass.getName());
+        if (memberNamesClass == null) {
+            return;
+        }
+        final Map<String, Enum<?>> mxMembersByBeanProp =
+            Arrays
+                .stream(memberNamesClass.getEnumConstants())
+                .filter(enu -> enu.toString().indexOf('.') != -1)
+                .collect(
+                    Collectors
+                        .toMap(
+                            enu -> Introspector
+                                .decapitalize(StringUtils.split(enu.toString(), '.')[1]),
+                            Function.identity()));
+
+        final BeanInfo info = Introspector.getBeanInfo(proxyClass);
+        final PropertyDescriptor[] propertyDescriptors = info.getPropertyDescriptors();
+        for (int i = 0; i < propertyDescriptors.length; ++i) {
+            final PropertyDescriptor pd = propertyDescriptors[i];
+            final Class<?> propertyType = pd.getPropertyType();
+
+            if (propertyType.isArray()) {
+                continue;
+            }
+
+            final Method readMethod = pd.getReadMethod();
+            if (readMethod == null) {
+                continue;
+            }
+
+            if (!proxyClass.equals(readMethod.getDeclaringClass())) {
+                continue;
+            }
+
+            final Class<?> elementClass;
+            if (Collection.class.isAssignableFrom(propertyType)) {
+                // 1:* or *:*
+                final ParameterizedType genericReturnType =
+                    (ParameterizedType) readMethod.getGenericReturnType();
+                final Type elementType = genericReturnType.getActualTypeArguments()[0];
+                if (!(elementType instanceof Class)) {
+                    continue;
+                }
+                elementClass = (Class<?>) elementType;
+                if (elementClass.isEnum()) {
+                    continue;
+                }
+
+            } else {
+                // 1:1
+                elementClass = propertyType;
+            }
+
+            if (elementClass.isEnum()) {
+                continue;
+            }
+            final String elementClassName = elementClass.getName();
+
+            if (!elementClassName.matches("^[^.]+\\.proxies\\.[^.$]+$")) {
+                continue;
+            }
+
+            final String associatedEntityName;
+            try {
+                associatedEntityName = (String) elementClass.getField("entityName").get(null);
+            } catch (final NoSuchFieldException e) {
+                e.printStackTrace();
+                continue;
+            }
+
+            final String propName = pd.getName();
+            final Enum<?> enuAssoc = mxMembersByBeanProp.get(propName);
+
+            assocs.put(propName, associatedEntityName);
+
+            // System.out.println(propName + ": " + propertyType);
+            // propertyType.toString();
+        }
     }
 
     private static void generateJavaFile(
@@ -88,10 +223,11 @@ public class GenerateMendixJdbcProxies {
         sb.append("/* generated with: ").append(GenerateMendixJdbcProxies.class.getName()).append(" */");
         sb.append("\n").append("package ").append(newPackage).append(";");
         sb.append("\n");
+        final boolean isEnum = proxyClass.isEnum();
         sb
             .append("\n")
             .append("public ")
-            .append(proxyClass.isEnum() ? "enum" : "class")
+            .append(isEnum ? "enum" : "class")
             .append(" ")
             .append(dbClassSimpleName);
 
@@ -117,7 +253,7 @@ public class GenerateMendixJdbcProxies {
             final PropertyDescriptor[] propertyDescriptors = info.getPropertyDescriptors();
             for (int i = 0; i < propertyDescriptors.length; ++i) {
                 final PropertyDescriptor pd = propertyDescriptors[i];
-                // pd.g
+                pd.getName();
             }
 
         }
