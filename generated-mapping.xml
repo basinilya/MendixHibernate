@@ -36,7 +36,7 @@ xsi:schemaLocation="http://www.hibernate.org/xsd/orm/mapping https://hibernate.o
             <id name="id"  >
                 <column name="id"/>
             </id>
-            <basic name="name">
+            <basic name="name2">
                 <column name="name2"/>
             </basic>
 
