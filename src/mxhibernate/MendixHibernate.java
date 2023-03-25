@@ -114,9 +114,11 @@ public class MendixHibernate {
         }
     }
 
-    private static void customLogic0(final DataSource dataSource) throws SQLException, IOException {
+    private static void customLogic0(final DataSource dataSource) throws Exception {
         final List<Long> userIds;
         try (Connection conn = dataSource.getConnection();) {
+            final JdbcEntities jdbcEntities = JdbcEntities.getInstance(conn);
+            jdbcEntities.toString();
             userIds = logUsersWithPureJdbc(conn);
             logAccountsWithPureJdbc(conn);
             logRolesWithPureJdbc(conn);
@@ -270,17 +272,6 @@ public class MendixHibernate {
 
     private static String getEntityName(final EntityManager entityManager, final Class<?> clazz) {
         return entityManager.getMetamodel().entity(clazz).getName();
-    }
-
-    private static String getLocalDbJdbcUrl() throws IOException {
-        final StringBuilder serverUrl = new StringBuilder();
-        serverUrl.append("file:");
-        final String databaseName = "default";
-        final String child = "hsqldb/" + databaseName + "/" + databaseName;
-        final File databaseDir = new File("DummyMendixApp/deployment/data/database", child);
-        serverUrl.append(databaseDir).append(";ifexists=true;readonly=true;");
-
-        return "jdbc:hsqldb:" + serverUrl.toString();
     }
 
     private static SessionFactory makeSessionFactoryBuilder(final DataSource dataSource)
@@ -535,4 +526,14 @@ public class MendixHibernate {
         password = "";
     }
 
+    private static String getLocalDbJdbcUrl() throws IOException {
+        final StringBuilder serverUrl = new StringBuilder();
+        serverUrl.append("file:");
+        final String databaseName = "default";
+        final String child = "hsqldb/" + databaseName + "/" + databaseName;
+        final File databaseDir = new File("DummyMendixApp/deployment/data/database", child);
+        serverUrl.append(databaseDir).append(";ifexists=true;readonly=true;");
+
+        return "jdbc:hsqldb:" + serverUrl.toString();
+    }
 }

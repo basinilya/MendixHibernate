@@ -23,6 +23,26 @@
     </plugins>
   </build>
   <dependencies>
+  
+    <dependency>
+      <groupId>com.mendix</groupId>
+      <artifactId>public-api</artifactId>
+      <version>9.18.3.58938</version>
+      <scope>system</scope>
+      <systemPath>${project.basedir}/lib/com.mendix.public-api.jar</systemPath>
+    </dependency>
+
+    <dependency>
+      <groupId>org.apache.commons</groupId>
+      <artifactId>commons-text</artifactId>
+      <version>1.10.0</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.apache.commons</groupId>
+      <artifactId>commons-lang3</artifactId>
+      <version>3.11</version>
+    </dependency>
 
     <dependency>
       <groupId>org.glassfish.jaxb</groupId>
