@@ -31,6 +31,7 @@ import org.hibernate.boot.jaxb.mapping.JaxbEntity;
 import org.hibernate.boot.jaxb.mapping.JaxbEntityMappings;
 import org.hibernate.boot.jaxb.mapping.JaxbId;
 import org.hibernate.boot.jaxb.mapping.JaxbInheritance;
+import org.hibernate.boot.jaxb.mapping.JaxbJoinColumn;
 import org.hibernate.boot.jaxb.mapping.JaxbJoinTable;
 import org.hibernate.boot.jaxb.mapping.JaxbManyToMany;
 import org.hibernate.boot.jaxb.mapping.JaxbPersistenceUnitMetadata;
@@ -328,55 +329,117 @@ public class MendixHibernate {
 
         ormRoot.setAttributeAccessor("property");
 
-        final JaxbEntity entity = new JaxbEntity();
-        entity.setName(DbUser.entityName);
-        entity.setClazz(DbUser.class.getSimpleName());
-        final JaxbTable table = new JaxbTable();
-        table.setName("system$user");
-        entity.setTable(table);
-
-        final JaxbInheritance inheritance = new JaxbInheritance();
-        inheritance.setStrategy(InheritanceType.JOINED);
-        entity.setInheritance(inheritance);
-
-        final JaxbDiscriminatorColumn discriminator = new JaxbDiscriminatorColumn();
-        discriminator.setName(MxHibernateConstants.DISCRIMINATOR_COLUMN);
-        discriminator.setDiscriminatorType(DiscriminatorType.STRING);
-        entity.setDiscriminatorColumn(discriminator);
-
-        final JaxbAttributes attributes = new JaxbAttributes();
         {
-            final JaxbId id = new JaxbId();
-            id.setName(MxHibernateConstants.ID_COLUMN);
+            final JaxbEntity entity = new JaxbEntity();
+            entity.setName(DbUser.entityName);
+            entity.setClazz(DbUser.class.getSimpleName());
+            final JaxbTable table = new JaxbTable();
+            table.setName("system$user");
+            entity.setTable(table);
+
+            final JaxbInheritance inheritance = new JaxbInheritance();
+            inheritance.setStrategy(InheritanceType.JOINED);
+            entity.setInheritance(inheritance);
+
+            final JaxbDiscriminatorColumn discriminator = new JaxbDiscriminatorColumn();
+            discriminator.setName(MxHibernateConstants.DISCRIMINATOR_COLUMN);
+            discriminator.setDiscriminatorType(DiscriminatorType.STRING);
+            entity.setDiscriminatorColumn(discriminator);
+
+            final JaxbAttributes attributes = new JaxbAttributes();
             {
-                final JaxbColumn column = new JaxbColumn();
-                column.setName(MxHibernateConstants.ID_COLUMN);
-                id.setColumn(column);
+                final JaxbId id = new JaxbId();
+                id.setName(MxHibernateConstants.ID_COLUMN);
+                {
+                    final JaxbColumn column = new JaxbColumn();
+                    column.setName(MxHibernateConstants.ID_COLUMN);
+                    id.setColumn(column);
+                }
+                attributes.getId().add(id);
             }
-            attributes.getId().add(id);
+
+            {
+                final JaxbBasic attr = new JaxbBasic();
+                attr.setName(DbUser.MemberNames.Name.toString());
+                {
+                    final JaxbColumn column = new JaxbColumn();
+                    column.setName("name");
+                    attr.setColumn(column);
+                }
+                attributes.getBasicAttributes().add(attr);
+            }
+
+            final JaxbManyToMany manyToMany = new JaxbManyToMany();
+            manyToMany.setName("userRoles");
+            final JaxbJoinTable joinTable = new JaxbJoinTable();
+            joinTable.setName("system$userroles");
+            final JaxbJoinColumn joinColumn = new JaxbJoinColumn();
+            joinColumn.setName("system$userid");
+            joinTable.getJoinColumn().add(joinColumn);
+            final JaxbJoinColumn inverseJoinColumn = new JaxbJoinColumn();
+            inverseJoinColumn.setName("system$userroleid");
+            joinTable.getInverseJoinColumn().add(inverseJoinColumn);
+            manyToMany.setJoinTable(joinTable);
+            attributes.getManyToManyAttributes().add(manyToMany);
+
+            entity.setAttributes(attributes);
+
+            ormRoot.getEntities().add(entity);
         }
 
         {
-            final JaxbBasic attr = new JaxbBasic();
-            attr.setName(DbUser.MemberNames.Name.toString());
+            final JaxbEntity entity = new JaxbEntity();
+            entity.setName(DbUserRole.entityName);
+            entity.setClazz(DbUserRole.class.getSimpleName());
+            final JaxbTable table = new JaxbTable();
+            table.setName("system$userrole");
+            entity.setTable(table);
+
+            final JaxbInheritance inheritance = new JaxbInheritance();
+            inheritance.setStrategy(InheritanceType.JOINED);
+            entity.setInheritance(inheritance);
+
+            final JaxbAttributes attributes = new JaxbAttributes();
             {
-                final JaxbColumn column = new JaxbColumn();
-                column.setName("name");
-                attr.setColumn(column);
+                final JaxbId id = new JaxbId();
+                id.setName(MxHibernateConstants.ID_COLUMN);
+                {
+                    final JaxbColumn column = new JaxbColumn();
+                    column.setName(MxHibernateConstants.ID_COLUMN);
+                    id.setColumn(column);
+                }
+                attributes.getId().add(id);
             }
-            attributes.getBasicAttributes().add(attr);
+
+            {
+                final JaxbBasic attr = new JaxbBasic();
+                attr.setName(DbUserRole.MemberNames.Name.toString());
+                {
+                    final JaxbColumn column = new JaxbColumn();
+                    column.setName("name");
+                    attr.setColumn(column);
+                }
+                attributes.getBasicAttributes().add(attr);
+            }
+            // aaa
+
+            final JaxbManyToMany manyToMany = new JaxbManyToMany();
+            manyToMany.setName("userRoles");
+            final JaxbJoinTable joinTable = new JaxbJoinTable();
+            joinTable.setName("system$userroles");
+            final JaxbJoinColumn joinColumn = new JaxbJoinColumn();
+            joinColumn.setName("system$userid");
+            joinTable.getJoinColumn().add(joinColumn);
+            final JaxbJoinColumn inverseJoinColumn = new JaxbJoinColumn();
+            inverseJoinColumn.setName("system$userroleid");
+            joinTable.getInverseJoinColumn().add(inverseJoinColumn);
+            manyToMany.setJoinTable(joinTable);
+            attributes.getManyToManyAttributes().add(manyToMany);
+
+            entity.setAttributes(attributes);
+
+            ormRoot.getEntities().add(entity);
         }
-
-        final JaxbManyToMany manyToMany = new JaxbManyToMany();
-        manyToMany.setName("userRoles");
-        final JaxbJoinTable joinTable = new JaxbJoinTable();
-        final aaa
-        manyToMany.setJoinTable(joinTable);
-        attributes.getManyToManyAttributes().add(manyToMany);
-
-        entity.setAttributes(attributes);
-
-        ormRoot.getEntities().add(entity);
 
         return ormRoot;
     }
