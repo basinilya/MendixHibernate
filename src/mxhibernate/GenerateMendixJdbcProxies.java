@@ -57,8 +57,7 @@ public class GenerateMendixJdbcProxies {
             throw new FileNotFoundException(fBpeSources.getPath());
         }
 
-        final File fBpClasses =
-            new File("./DummyMendixApp/deployment/run/bin").getAbsoluteFile();
+        final File fBpClasses = new File("./DummyMendixApp/deployment/run/bin").getAbsoluteFile();
         if (!fBpClasses.isDirectory()) {
             throw new FileNotFoundException(fBpClasses.getPath());
         }
@@ -73,8 +72,6 @@ public class GenerateMendixJdbcProxies {
             for (final String proxyClassName : proxyClassNames) {
                 collectAssociations(fBpeSources0, urlClassLoader, proxyClassName);
             }
-            System.out.println(assocsByEntityName);
-            System.exit(0);
             for (final String proxyClassName : proxyClassNames) {
                 generateJavaFile(fBpeSources0, urlClassLoader, proxyClassName);
             }
@@ -95,23 +92,6 @@ public class GenerateMendixJdbcProxies {
 
         final boolean isEnum = proxyClass.isEnum();
         if (isEnum) {
-            return;
-        }
-
-        extracted(urlClassLoader, proxyClass);
-
-    }
-
-    private static void extracted(final URLClassLoader urlClassLoader, final Class<?> proxyClass)
-                                                             throws IntrospectionException,
-                                                                 NoSuchFieldException,
-                                                                 IllegalArgumentException,
-                                                                 IllegalAccessException,
-                                                                 SecurityException {
-
-        if (proxyClass.getName().startsWith("system") || proxyClass
-            .getName()
-            .startsWith("administration")) {
             return;
         }
 
@@ -182,12 +162,7 @@ public class GenerateMendixJdbcProxies {
             }
 
             final String associatedEntityName;
-            try {
-                associatedEntityName = (String) elementClass.getField("entityName").get(null);
-            } catch (final NoSuchFieldException e) {
-                e.printStackTrace();
-                continue;
-            }
+            associatedEntityName = (String) elementClass.getField("entityName").get(null);
 
             final String propName = pd.getName();
             final Enum<?> enuAssoc = mxMembersByBeanProp.get(propName);
@@ -203,9 +178,9 @@ public class GenerateMendixJdbcProxies {
             final File fBpeSources0,
             final URLClassLoader urlClassLoader,
             final String proxyClassName)
-                                   throws ClassNotFoundException,
-                                       NoSuchFieldException,
-                                       IllegalAccessException,
+                                         throws ClassNotFoundException,
+                                             NoSuchFieldException,
+                                             IllegalAccessException,
                                              IOException,
                                              IntrospectionException {
         final Class<?> proxyClass = urlClassLoader.loadClass(proxyClassName);
@@ -220,7 +195,10 @@ public class GenerateMendixJdbcProxies {
         final String newPackage = split[0];
         final String dbClassSimpleName = split[1];
 
-        sb.append("/* generated with: ").append(GenerateMendixJdbcProxies.class.getName()).append(" */");
+        sb
+            .append("/* generated with: ")
+            .append(GenerateMendixJdbcProxies.class.getName())
+            .append(" */");
         sb.append("\n").append("package ").append(newPackage).append(";");
         sb.append("\n");
         final boolean isEnum = proxyClass.isEnum();
@@ -249,13 +227,6 @@ public class GenerateMendixJdbcProxies {
 
             appendClassBody(sb, urlClassLoader, proxyClassName, proxyClass);
 
-            final BeanInfo info = Introspector.getBeanInfo(proxyClass);
-            final PropertyDescriptor[] propertyDescriptors = info.getPropertyDescriptors();
-            for (int i = 0; i < propertyDescriptors.length; ++i) {
-                final PropertyDescriptor pd = propertyDescriptors[i];
-                pd.getName();
-            }
-
         }
 
         sb.append("\n").append("}");
@@ -277,7 +248,10 @@ public class GenerateMendixJdbcProxies {
             final StringBuilder sb,
             final URLClassLoader urlClassLoader,
             final String proxyClassName,
-            final Class<?> proxyClass) throws NoSuchFieldException, IllegalAccessException {
+            final Class<?> proxyClass)
+                                       throws NoSuchFieldException,
+                                           IllegalAccessException,
+                                           IntrospectionException {
         final Field fEntityName = proxyClass.getDeclaredField("entityName");
         final String entityName = (String) fEntityName.get(null);
         final String escEntity = StringEscapeUtils.escapeJava(entityName);
@@ -289,42 +263,137 @@ public class GenerateMendixJdbcProxies {
             .append("\";");
 
         final Class<Enum<?>> memberNamesClass = getMemberNamesClass(urlClassLoader, proxyClassName);
-        if (memberNamesClass != null) {
-            sb.append("\n");
-            sb.append("\n").append("    public enum MemberNames");
-            sb.append("\n").append("    {");
-            final Enum<?>[] enums = memberNamesClass.getEnumConstants();
-            String esep = "\n";
-            for (final Enum<?> enu : enums) {
-                final String name = enu.name();
-                final String value = enu.toString();
-                final String escVal = StringEscapeUtils.escapeJava(value);
-                sb
-                    .append(esep)
-                    .append("        ")
-                    .append(name)
-                    .append("(\"")
-                    .append(escVal)
-                    .append("\")");
-                esep = ",\n";
+        if (memberNamesClass == null) {
+            return;
+        }
+
+        sb.append("\n");
+        sb.append("\n").append("    public enum MemberNames");
+        sb.append("\n").append("    {");
+        final Enum<?>[] enums = memberNamesClass.getEnumConstants();
+        String esep = "\n";
+        for (final Enum<?> enu : enums) {
+            final String name = enu.name();
+            final String value = enu.toString();
+            final String escVal = StringEscapeUtils.escapeJava(value);
+            sb
+                .append(esep)
+                .append("        ")
+                .append(name)
+                .append("(\"")
+                .append(escVal)
+                .append("\")");
+            esep = ",\n";
+        }
+        sb.append(";");
+        sb.append("\n");
+        sb
+            .append(
+                "\n" //
+                    + "        private final java.lang.String metaName;\n" //
+                    + "\n" + "        MemberNames(java.lang.String s)\n" //
+                    + "        {\n" //
+                    + "            metaName = s;\n" //
+                    + "        }\n" //
+                    + "\n" + "        @java.lang.Override\n"
+                    + "        public java.lang.String toString()\n" //
+                    + "        {\n" + "            return metaName;\n" //
+                    + "        }\n" //
+                    + "    }\n" //
+            );
+
+        final Map<String, Enum<?>> mxMembersByBeanProp =
+            Arrays
+                .stream(memberNamesClass.getEnumConstants())
+                .collect(
+                    Collectors
+                        .toMap(
+                            enu -> Introspector
+                                .decapitalize(enu.toString().replaceFirst(".*\\.", "")),
+                            Function.identity()));
+
+        final BeanInfo info = Introspector.getBeanInfo(proxyClass);
+        final PropertyDescriptor[] propertyDescriptors = info.getPropertyDescriptors();
+        for (int i = 0; i < propertyDescriptors.length; ++i) {
+            final PropertyDescriptor pd = propertyDescriptors[i];
+
+            final Class<?> propertyType = pd.getPropertyType();
+
+            if (propertyType.isArray()) {
+                continue;
             }
-            sb.append(";");
-            sb.append("\n");
+
+            final Method readMethod = pd.getReadMethod();
+
+            // hashed string only has a setter
+            final Method anyMethod = readMethod == null ? pd.getWriteMethod() : readMethod;
+            if (anyMethod == null) {
+                continue;
+            }
+
+            if (!proxyClass.equals(anyMethod.getDeclaringClass())) {
+                continue;
+            }
+
+            if (Collection.class.isAssignableFrom(propertyType)) {
+                // 1:* or *:*
+                continue;
+            }
+
+            // 1:1 or regular property
+            final Class<?> propClass = propertyType;
+
+            final String propClassName = propClass.getName();
+
+            final boolean propIsProxy = propClassName.matches("^[^.]+\\.proxies\\.[^.$]+$");
+
+            if (!propClass.isEnum() && propIsProxy) {
+                // reference
+                continue;
+            }
+
+            final String propName = pd.getName();
+
+            final Enum<?> enuMember = mxMembersByBeanProp.get(propName);
+
+            if (enuMember == null) {
+                continue;
+            }
+
+            final String newPropClassName =
+                propIsProxy
+                    ? StringUtils.join(convertProxyClassName(propClassName), '.')
+                    : propClassName;
+
+            final String baseName = StringUtils.capitalize(propName);
+            final String getterName = "get" + baseName;
+            final String setterName = "set" + baseName;
+
             sb
                 .append(
-                    "\n" //
-                        + "        private final java.lang.String metaName;\n" //
-                        + "\n" + "        MemberNames(java.lang.String s)\n" //
-                        + "        {\n" //
-                        + "            metaName = s;\n" //
-                        + "        }\n" //
-                        + "\n" + "        @java.lang.Override\n"
-                        + "        public java.lang.String toString()\n" //
-                        + "        {\n" + "            return metaName;\n" //
-                        + "        }\n" //
-                        + "    }\n" //
-                );
+                    "\n"//
+                        + "\n" + "    public ")
+                .append(newPropClassName)
+                .append(" ")
+                .append(getterName)
+                .append(
+                    "() {" //
+                        + "\n" + "        return null;" //
+                        + "\n" + "    }");
+
+            sb
+                .append(
+                    "\n"//
+                        + "\n" + "    public void ")
+                .append(setterName)
+                .append("(")
+                .append(newPropClassName)
+                .append(
+                    " val) {" //
+                        + "\n" + "    }");
+
         }
+
     }
 
     private static void appendEnumClassBody(
@@ -340,8 +409,7 @@ public class GenerateMendixJdbcProxies {
         for (final Enum<?> enu : enums) {
             final String name = enu.name();
             @SuppressWarnings("unchecked")
-            final
-            Map<String, String> captions = (Map<String, String>) fCaptions.get(enu);
+            final Map<String, String> captions = (Map<String, String>) fCaptions.get(enu);
 
             sb.append(esep).append("    ").append(name).append("(new java.lang.String[][] { ");
             esep = ",\n";
@@ -446,7 +514,8 @@ public class GenerateMendixJdbcProxies {
         }
 
         @Override
-        public FileVisitResult visitFile(final Path file, final BasicFileAttributes attrs) throws IOException {
+        public FileVisitResult visitFile(final Path file, final BasicFileAttributes attrs)
+                                                                                           throws IOException {
             super.visitFile(file, attrs);
             if (file.toString().endsWith(".java")) {
                 Files.delete(file);
@@ -455,7 +524,8 @@ public class GenerateMendixJdbcProxies {
         }
 
         @Override
-        public FileVisitResult postVisitDirectory(final Path dir, final IOException exc) throws IOException {
+        public FileVisitResult postVisitDirectory(final Path dir, final IOException exc)
+                                                                                         throws IOException {
             super.postVisitDirectory(dir, exc);
             if (!dir.equals(pBpeSources) && PathUtils.isEmptyDirectory(dir)) {
                 Files.delete(dir);
