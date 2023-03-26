@@ -24,7 +24,6 @@ public class DbHttpMessage
         }
     }
 
-
     private java.lang.String content;
 
     public java.lang.String getContent() {

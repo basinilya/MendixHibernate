@@ -28,7 +28,6 @@ public class DbFileDocument
         }
     }
 
-
     private java.lang.Boolean deleteAfterDownload;
 
     public java.lang.Boolean getDeleteAfterDownload() {

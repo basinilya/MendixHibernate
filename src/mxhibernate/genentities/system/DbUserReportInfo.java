@@ -25,7 +25,6 @@ public class DbUserReportInfo
         }
     }
 
-
     private java.lang.String hash;
 
     public java.lang.String getHash() {

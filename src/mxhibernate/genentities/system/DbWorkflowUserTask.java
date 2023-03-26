@@ -33,7 +33,6 @@ public class DbWorkflowUserTask
         }
     }
 
-
     private java.lang.String description;
 
     public java.lang.String getDescription() {

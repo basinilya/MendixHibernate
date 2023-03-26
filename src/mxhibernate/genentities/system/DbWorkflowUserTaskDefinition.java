@@ -25,7 +25,6 @@ public class DbWorkflowUserTaskDefinition
         }
     }
 
-
     private java.lang.Boolean isObsolete;
 
     public java.lang.Boolean getIsObsolete() {

@@ -28,7 +28,6 @@ public class DbScheduledEventInformation
         }
     }
 
-
     private java.lang.String description;
 
     public java.lang.String getDescription() {

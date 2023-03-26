@@ -344,20 +344,15 @@ public class MendixHibernate {
         ormRoot.setDescription("generated out of current Mendix metadata");
 
         final JaxbPersistenceUnitMetadata metadata = new JaxbPersistenceUnitMetadata();
-        // JaxbPersistenceUnitDefaults defaults = new JaxbPersistenceUnitDefaults ();
-        // defaults.setDefaultAccess();
-        // metadata.setPersistenceUnitDefaults(defaults );
         metadata.setXmlMappingMetadataComplete(new JaxbEmptyType());
         ormRoot.setPersistenceUnitMetadata(metadata);
-
-        ormRoot.setPackage(DbUser.class.getPackageName());
 
         ormRoot.setAccess(AccessType.PROPERTY);
 
         {
             final JaxbEntity entity = new JaxbEntity();
             entity.setName(DbUser.entityName);
-            entity.setClazz(DbUser.class.getSimpleName());
+            entity.setClazz(DbUser.class.getName());
             final JaxbTable table = new JaxbTable();
             table.setName("system$user");
             entity.setTable(table);
@@ -415,7 +410,7 @@ public class MendixHibernate {
         {
             final JaxbEntity entity = new JaxbEntity();
             entity.setName(DbUserRole.entityName);
-            entity.setClazz(DbUserRole.class.getSimpleName());
+            entity.setClazz(DbUserRole.class.getName());
             final JaxbTable table = new JaxbTable();
             table.setName("system$userrole");
             entity.setTable(table);
@@ -460,7 +455,7 @@ public class MendixHibernate {
         {
             final JaxbEntity entity = new JaxbEntity();
             entity.setName(DbAccount.entityName);
-            entity.setClazz(DbAccount.class.getSimpleName());
+            entity.setClazz(DbAccount.class.getName());
             final JaxbTable table = new JaxbTable();
             table.setName("administration$account");
             entity.setTable(table);

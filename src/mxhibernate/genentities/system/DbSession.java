@@ -26,7 +26,6 @@ public class DbSession
         }
     }
 
-
     private java.lang.String CSRFToken;
 
     public java.lang.String getCSRFToken() {

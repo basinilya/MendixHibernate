@@ -25,7 +25,6 @@ public class DbError
         }
     }
 
-
     private java.lang.String errorType;
 
     public java.lang.String getErrorType() {

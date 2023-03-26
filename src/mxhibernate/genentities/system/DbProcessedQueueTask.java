@@ -41,7 +41,6 @@ public class DbProcessedQueueTask
         }
     }
 
-
     private java.lang.String XASId;
 
     public java.lang.String getXASId() {

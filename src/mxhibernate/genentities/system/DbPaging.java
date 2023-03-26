@@ -27,7 +27,6 @@ public class DbPaging
         }
     }
 
-
     private java.lang.Boolean hasMoreData;
 
     public java.lang.Boolean getHasMoreData() {

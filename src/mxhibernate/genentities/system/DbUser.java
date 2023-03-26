@@ -34,7 +34,6 @@ public class DbUser
         }
     }
 
-
     private java.lang.Boolean active;
 
     public java.lang.Boolean getActive() {

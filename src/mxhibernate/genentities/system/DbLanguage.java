@@ -24,7 +24,6 @@ public class DbLanguage
         }
     }
 
-
     private java.lang.String code;
 
     public java.lang.String getCode() {

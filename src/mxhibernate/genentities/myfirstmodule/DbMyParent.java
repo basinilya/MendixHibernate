@@ -26,7 +26,6 @@ public class DbMyParent
         }
     }
 
-
     private java.lang.String attribute;
 
     public java.lang.String getAttribute() {

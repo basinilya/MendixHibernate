@@ -30,7 +30,6 @@ public class DbSoapFault extends mxhibernate.genentities.system.DbError
         }
     }
 
-
     private java.lang.String code;
 
     public java.lang.String getCode() {

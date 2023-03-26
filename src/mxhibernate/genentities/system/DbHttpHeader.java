@@ -25,7 +25,6 @@ public class DbHttpHeader
         }
     }
 
-
     private java.lang.String key;
 
     public java.lang.String getKey() {

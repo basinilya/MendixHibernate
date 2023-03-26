@@ -26,7 +26,6 @@ public class DbTokenInformation
         }
     }
 
-
     private java.util.Date expiryDate;
 
     public java.util.Date getExpiryDate() {

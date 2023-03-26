@@ -23,7 +23,6 @@ public class DbODataResponse
         }
     }
 
-
     private java.lang.Long count;
 
     public java.lang.Long getCount() {

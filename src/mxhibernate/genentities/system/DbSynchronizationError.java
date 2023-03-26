@@ -26,7 +26,6 @@ public class DbSynchronizationError
         }
     }
 
-
     private java.lang.String objectContent;
 
     public java.lang.String getObjectContent() {

@@ -26,7 +26,6 @@ public class DbHttpResponse extends mxhibernate.genentities.system.DbHttpMessage
         }
     }
 
-
     private java.lang.String reasonPhrase;
 
     public java.lang.String getReasonPhrase() {

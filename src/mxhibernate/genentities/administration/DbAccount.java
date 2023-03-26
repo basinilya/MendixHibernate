@@ -37,7 +37,6 @@ public class DbAccount extends mxhibernate.genentities.system.DbUser
         }
     }
 
-
     private java.lang.String email;
 
     public java.lang.String getEmail() {

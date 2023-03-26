@@ -25,7 +25,6 @@ public class DbWorkflowJumpToDetails
         }
     }
 
-
     private java.lang.String error;
 
     public java.lang.String getError() {

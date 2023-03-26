@@ -25,5 +25,4 @@ public class DbMyParentEx extends mxhibernate.genentities.myfirstmodule.DbMyPare
             return metaName;
         }
     }
-
 }

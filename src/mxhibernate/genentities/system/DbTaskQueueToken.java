@@ -25,7 +25,6 @@ public class DbTaskQueueToken
         }
     }
 
-
     private java.lang.String XASId;
 
     public java.lang.String getXASId() {

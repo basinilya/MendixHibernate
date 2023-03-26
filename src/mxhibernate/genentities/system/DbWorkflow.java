@@ -32,7 +32,6 @@ public class DbWorkflow
         }
     }
 
-
     private java.lang.Boolean canBeContinued;
 
     public java.lang.Boolean getCanBeContinued() {

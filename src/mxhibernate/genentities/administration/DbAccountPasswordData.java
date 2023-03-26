@@ -26,7 +26,6 @@ public class DbAccountPasswordData
         }
     }
 
-
     private java.lang.String confirmPassword;
 
     public java.lang.String getConfirmPassword() {

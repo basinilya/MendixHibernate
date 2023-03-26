@@ -39,7 +39,6 @@ public class DbQueuedTask
         }
     }
 
-
     private java.lang.String XASId;
 
     public java.lang.String getXASId() {

@@ -25,7 +25,6 @@ public class DbTimeZone
         }
     }
 
-
     private java.lang.String code;
 
     public java.lang.String getCode() {

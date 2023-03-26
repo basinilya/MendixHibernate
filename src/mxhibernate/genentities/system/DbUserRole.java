@@ -26,7 +26,6 @@ public class DbUserRole
         }
     }
 
-
     private java.lang.String description;
 
     public java.lang.String getDescription() {

@@ -25,7 +25,6 @@ public class DbHttpRequest extends mxhibernate.genentities.system.DbHttpMessage
         }
     }
 
-
     private java.lang.String uri;
 
     public java.lang.String getUri() {

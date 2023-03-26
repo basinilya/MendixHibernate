@@ -26,7 +26,6 @@ public class DbWorkflowCurrentActivity
         }
     }
 
-
     private java.lang.String action;
 
     public java.lang.String getAction() {

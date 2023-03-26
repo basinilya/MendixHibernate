@@ -26,7 +26,6 @@ public class DbWorkflowActivityDetails
         }
     }
 
-
     private java.lang.String activityCaption;
 
     public java.lang.String getActivityCaption() {
