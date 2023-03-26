@@ -1,0 +1,666 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<entity-mappings xmlns="http://www.hibernate.org/xsd/orm/mapping">
+    <description>generated out of current Mendix metadata</description>
+    <persistence-unit-metadata>
+        <xml-mapping-metadata-complete/>
+    </persistence-unit-metadata>
+    <access>PROPERTY</access>
+    <entity name="System.User" class="mxhibernate.genentities.system.DbUser">
+        <table name="system$user"/>
+        <inheritance strategy="JOINED"/>
+        <discriminator-column name="submetaobjectname" discriminator-type="STRING"/>
+        <attributes>
+            <id name="id">
+                <column name="id"/>
+            </id>
+            <basic name="active">
+                <column name="active"/>
+            </basic>
+            <basic name="lastLogin">
+                <column name="lastlogin"/>
+            </basic>
+            <basic name="webServiceUser">
+                <column name="webserviceuser"/>
+            </basic>
+            <basic name="isAnonymous">
+                <column name="isanonymous"/>
+            </basic>
+            <basic name="failedLogins">
+                <column name="failedlogins"/>
+            </basic>
+            <basic name="blocked">
+                <column name="blocked"/>
+            </basic>
+            <basic name="blockedSince">
+                <column name="blockedsince"/>
+            </basic>
+            <basic name="name">
+                <column name="name"/>
+            </basic>
+            <basic name="password">
+                <column name="password"/>
+            </basic>
+            <many-to-many name="user_Language">
+                <join-table name="system$user_language">
+                    <join-column name="system$userid"/>
+                    <inverse-join-column name="system$languageid"/>
+                </join-table>
+            </many-to-many>
+            <many-to-many name="user_TimeZone">
+                <join-table name="system$user_timezone">
+                    <join-column name="system$userid"/>
+                    <inverse-join-column name="system$timezoneid"/>
+                </join-table>
+            </many-to-many>
+            <many-to-many name="userRoles">
+                <join-table name="system$userroles">
+                    <join-column name="system$userid"/>
+                    <inverse-join-column name="system$userroleid"/>
+                </join-table>
+            </many-to-many>
+            <many-to-many name="workflowUserTask_TargetUsers" mapped-by="workflowUserTask_TargetUsers"/>
+            <many-to-many name="workflowUserTask_Assignee" mapped-by="workflowUserTask_Assignee"/>
+            <many-to-many name="tokenInformation_User" mapped-by="tokenInformation_User"/>
+            <many-to-many name="session_User" mapped-by="session_User"/>
+            <many-to-many name="userReportInfo_User" mapped-by="userReportInfo_User"/>
+        </attributes>
+    </entity>
+    <entity name="System.SynchronizationErrorFile" class="mxhibernate.genentities.system.DbSynchronizationErrorFile">
+        <table name="system$synchronizationerrorfile"/>
+        <attributes>
+            <many-to-many name="synchronizationErrorFile_SynchronizationError">
+                <join-table name="system$synchronizationerrorfile_synchronizationerror">
+                    <join-column name="system$synchronizationerrorfileid"/>
+                    <inverse-join-column name="system$synchronizationerrorid"/>
+                </join-table>
+            </many-to-many>
+        </attributes>
+    </entity>
+    <entity name="System.XASInstance" class="mxhibernate.genentities.system.DbXASInstance">
+        <table name="system$xasinstance"/>
+        <inheritance strategy="JOINED"/>
+        <attributes>
+            <id name="id">
+                <column name="id"/>
+            </id>
+            <basic name="XASId">
+                <column name="xasid"/>
+            </basic>
+            <basic name="lastUpdate">
+                <column name="lastupdate"/>
+            </basic>
+            <basic name="allowedNumberOfConcurrentUsers">
+                <column name="allowednumberofconcurrentusers"/>
+            </basic>
+            <basic name="customerName">
+                <column name="customername"/>
+            </basic>
+            <basic name="partnerName">
+                <column name="partnername"/>
+            </basic>
+            <many-to-many name="scheduledEventInformation_XASInstance" mapped-by="scheduledEventInformation_XASInstance"/>
+        </attributes>
+    </entity>
+    <entity name="System.Workflow" class="mxhibernate.genentities.system.DbWorkflow">
+        <table name="system$workflow"/>
+        <inheritance strategy="JOINED"/>
+        <attributes>
+            <id name="id">
+                <column name="id"/>
+            </id>
+            <basic name="description">
+                <column name="description"/>
+            </basic>
+            <basic name="endTime">
+                <column name="endtime"/>
+            </basic>
+            <basic name="canBeContinued">
+                <column name="canbecontinued"/>
+            </basic>
+            <basic name="state">
+                <column name="state"/>
+            </basic>
+            <basic name="canBeRestarted">
+                <column name="canberestarted"/>
+            </basic>
+            <basic name="startTime">
+                <column name="starttime"/>
+            </basic>
+            <basic name="dueDate">
+                <column name="duedate"/>
+            </basic>
+            <basic name="reason">
+                <column name="reason"/>
+            </basic>
+            <basic name="name">
+                <column name="name"/>
+            </basic>
+            <many-to-many name="workflow_WorkflowDefinition">
+                <join-table name="system$workflow_workflowdefinition">
+                    <join-column name="system$workflowid"/>
+                    <inverse-join-column name="system$workflowdefinitionid"/>
+                </join-table>
+            </many-to-many>
+            <many-to-many name="workflowUserTask_Workflow" mapped-by="workflowUserTask_Workflow"/>
+        </attributes>
+    </entity>
+    <entity name="System.WorkflowDefinition" class="mxhibernate.genentities.system.DbWorkflowDefinition">
+        <table name="system$workflowdefinition"/>
+        <inheritance strategy="JOINED"/>
+        <attributes>
+            <id name="id">
+                <column name="id"/>
+            </id>
+            <basic name="isObsolete">
+                <column name="isobsolete"/>
+            </basic>
+            <basic name="title">
+                <column name="title"/>
+            </basic>
+            <basic name="name">
+                <column name="name"/>
+            </basic>
+            <many-to-many name="workflow_WorkflowDefinition" mapped-by="workflow_WorkflowDefinition"/>
+            <many-to-many name="workflowUserTaskDefinition_WorkflowDefinition" mapped-by="workflowUserTaskDefinition_WorkflowDefinition"/>
+        </attributes>
+    </entity>
+    <entity name="System.TimeZone" class="mxhibernate.genentities.system.DbTimeZone">
+        <table name="system$timezone"/>
+        <inheritance strategy="JOINED"/>
+        <attributes>
+            <id name="id">
+                <column name="id"/>
+            </id>
+            <basic name="description">
+                <column name="description"/>
+            </basic>
+            <basic name="rawOffset">
+                <column name="rawoffset"/>
+            </basic>
+            <basic name="code">
+                <column name="code"/>
+            </basic>
+            <many-to-many name="user_TimeZone" mapped-by="user_TimeZone"/>
+        </attributes>
+    </entity>
+    <entity name="MyFirstModule.MyChild" class="mxhibernate.genentities.myfirstmodule.DbMyChild">
+        <table name="myfirstmodule$mychild"/>
+        <inheritance strategy="JOINED"/>
+        <attributes>
+            <id name="id">
+                <column name="id"/>
+            </id>
+            <basic name="attribute">
+                <column name="attribute"/>
+            </basic>
+            <many-to-many name="myParent_MyChild" mapped-by="myParent_MyChild"/>
+        </attributes>
+    </entity>
+    <entity name="System.UserRole" class="mxhibernate.genentities.system.DbUserRole">
+        <table name="system$userrole"/>
+        <inheritance strategy="JOINED"/>
+        <attributes>
+            <id name="id">
+                <column name="id"/>
+            </id>
+            <basic name="modelGUID">
+                <column name="modelguid"/>
+            </basic>
+            <basic name="description">
+                <column name="description"/>
+            </basic>
+            <basic name="name">
+                <column name="name"/>
+            </basic>
+            <many-to-many name="grantableRoles">
+                <join-table name="system$grantableroles">
+                    <join-column name="system$userroleid1"/>
+                    <inverse-join-column name="system$userroleid2"/>
+                </join-table>
+            </many-to-many>
+            <many-to-many name="grantableRoles_reverse" mapped-by="grantableRoles"/>
+            <many-to-many name="userRoles" mapped-by="userRoles"/>
+        </attributes>
+    </entity>
+    <entity name="System.Image" class="mxhibernate.genentities.system.DbImage">
+        <table name="system$image"/>
+        <attributes>
+            <basic name="publicThumbnailPath">
+                <column name="publicthumbnailpath"/>
+            </basic>
+        </attributes>
+    </entity>
+    <entity name="Administration.Account" class="mxhibernate.genentities.administration.DbAccount">
+        <table name="administration$account"/>
+        <attributes>
+            <basic name="email">
+                <column name="email"/>
+            </basic>
+            <basic name="fullName">
+                <column name="fullname"/>
+            </basic>
+            <basic name="isLocalUser">
+                <column name="islocaluser"/>
+            </basic>
+        </attributes>
+    </entity>
+    <entity name="System.WorkflowUserTaskDefinition" class="mxhibernate.genentities.system.DbWorkflowUserTaskDefinition">
+        <table name="system$workflowusertaskdefinition"/>
+        <inheritance strategy="JOINED"/>
+        <attributes>
+            <id name="id">
+                <column name="id"/>
+            </id>
+            <basic name="isObsolete">
+                <column name="isobsolete"/>
+            </basic>
+            <basic name="name">
+                <column name="name"/>
+            </basic>
+            <many-to-many name="workflowUserTaskDefinition_WorkflowDefinition">
+                <join-table name="system$workflowusertaskdefinition_workflowdefinition">
+                    <join-column name="system$workflowusertaskdefinitionid"/>
+                    <inverse-join-column name="system$workflowdefinitionid"/>
+                </join-table>
+            </many-to-many>
+            <many-to-many name="workflowUserTask_WorkflowUserTaskDefinition" mapped-by="workflowUserTask_WorkflowUserTaskDefinition"/>
+        </attributes>
+    </entity>
+    <entity name="MyFirstModule.MyParent" class="mxhibernate.genentities.myfirstmodule.DbMyParent">
+        <table name="myfirstmodule$myparent"/>
+        <inheritance strategy="JOINED"/>
+        <discriminator-column name="submetaobjectname" discriminator-type="STRING"/>
+        <attributes>
+            <id name="id">
+                <column name="id"/>
+            </id>
+            <basic name="attribute">
+                <column name="attribute"/>
+            </basic>
+            <many-to-many name="myParent_MyChild">
+                <join-table name="myfirstmodule$myparent_mychild">
+                    <join-column name="myfirstmodule$myparentid"/>
+                    <inverse-join-column name="myfirstmodule$mychildid"/>
+                </join-table>
+            </many-to-many>
+            <many-to-many name="many_Many">
+                <join-table name="myfirstmodule$many_many">
+                    <join-column name="myfirstmodule$myparentid1"/>
+                    <inverse-join-column name="myfirstmodule$myparentid2"/>
+                </join-table>
+            </many-to-many>
+            <many-to-many name="one_One">
+                <join-table name="myfirstmodule$one_one">
+                    <join-column name="myfirstmodule$myparentid1"/>
+                    <inverse-join-column name="myfirstmodule$myparentid2"/>
+                </join-table>
+            </many-to-many>
+            <many-to-many name="many_Many_reverse" mapped-by="many_Many"/>
+            <many-to-many name="one_One_reverse" mapped-by="one_One"/>
+        </attributes>
+    </entity>
+    <entity name="System.QueuedTask" class="mxhibernate.genentities.system.DbQueuedTask">
+        <table name="system$queuedtask"/>
+        <inheritance strategy="JOINED"/>
+        <attributes>
+            <id name="id">
+                <column name="id"/>
+            </id>
+            <basic name="status">
+                <column name="status"/>
+            </basic>
+            <basic name="contextType">
+                <column name="contexttype"/>
+            </basic>
+            <basic name="started">
+                <column name="started"/>
+            </basic>
+            <basic name="retried">
+                <column name="retried"/>
+            </basic>
+            <basic name="arguments">
+                <column name="arguments"/>
+            </basic>
+            <basic name="queueId">
+                <column name="queueid"/>
+            </basic>
+            <basic name="sequence">
+                <column name="sequence"/>
+            </basic>
+            <basic name="created">
+                <column name="created"/>
+            </basic>
+            <basic name="microflowName">
+                <column name="microflowname"/>
+            </basic>
+            <basic name="userActionName">
+                <column name="useractionname"/>
+            </basic>
+            <basic name="XASId">
+                <column name="xasid"/>
+            </basic>
+            <basic name="threadId">
+                <column name="threadid"/>
+            </basic>
+            <basic name="startAt">
+                <column name="startat"/>
+            </basic>
+            <basic name="scheduledEventName">
+                <column name="scheduledeventname"/>
+            </basic>
+            <basic name="contextData">
+                <column name="contextdata"/>
+            </basic>
+            <basic name="retry">
+                <column name="retry"/>
+            </basic>
+            <basic name="queueName">
+                <column name="queuename"/>
+            </basic>
+        </attributes>
+    </entity>
+    <entity name="System.FileDocument" class="mxhibernate.genentities.system.DbFileDocument">
+        <table name="system$filedocument"/>
+        <inheritance strategy="JOINED"/>
+        <discriminator-column name="submetaobjectname" discriminator-type="STRING"/>
+        <attributes>
+            <id name="id">
+                <column name="id"/>
+            </id>
+            <basic name="deleteAfterDownload">
+                <column name="deleteafterdownload"/>
+            </basic>
+            <basic name="size">
+                <column name="size"/>
+            </basic>
+            <basic name="hasContents">
+                <column name="hascontents"/>
+            </basic>
+            <basic name="fileID">
+                <column name="fileid"/>
+            </basic>
+            <basic name="name">
+                <column name="name"/>
+            </basic>
+        </attributes>
+    </entity>
+    <entity name="MyFirstModule.MyParentEx" class="mxhibernate.genentities.myfirstmodule.DbMyParentEx">
+        <table name="myfirstmodule$myparentex"/>
+        <attributes/>
+    </entity>
+    <entity name="System.ScheduledEventInformation" class="mxhibernate.genentities.system.DbScheduledEventInformation">
+        <table name="system$scheduledeventinformation"/>
+        <inheritance strategy="JOINED"/>
+        <attributes>
+            <id name="id">
+                <column name="id"/>
+            </id>
+            <basic name="status">
+                <column name="status"/>
+            </basic>
+            <basic name="description">
+                <column name="description"/>
+            </basic>
+            <basic name="endTime">
+                <column name="endtime"/>
+            </basic>
+            <basic name="startTime">
+                <column name="starttime"/>
+            </basic>
+            <basic name="name">
+                <column name="name"/>
+            </basic>
+            <many-to-many name="scheduledEventInformation_XASInstance">
+                <join-table name="system$scheduledeventinformation_xasinstance">
+                    <join-column name="system$scheduledeventinformationid"/>
+                    <inverse-join-column name="system$xasinstanceid"/>
+                </join-table>
+            </many-to-many>
+        </attributes>
+    </entity>
+    <entity name="System.UserReportInfo" class="mxhibernate.genentities.system.DbUserReportInfo">
+        <table name="system$userreportinfo"/>
+        <inheritance strategy="JOINED"/>
+        <attributes>
+            <id name="id">
+                <column name="id"/>
+            </id>
+            <basic name="hash">
+                <column name="hash"/>
+            </basic>
+            <basic name="userType">
+                <column name="usertype"/>
+            </basic>
+            <many-to-many name="userReportInfo_User">
+                <join-table name="system$userreportinfo_user">
+                    <join-column name="system$userreportinfoid"/>
+                    <inverse-join-column name="system$userid"/>
+                </join-table>
+            </many-to-many>
+        </attributes>
+    </entity>
+    <entity name="System.SynchronizationError" class="mxhibernate.genentities.system.DbSynchronizationError">
+        <table name="system$synchronizationerror"/>
+        <inheritance strategy="JOINED"/>
+        <attributes>
+            <id name="id">
+                <column name="id"/>
+            </id>
+            <basic name="objectContent">
+                <column name="objectcontent"/>
+            </basic>
+            <basic name="objectType">
+                <column name="objecttype"/>
+            </basic>
+            <basic name="objectId">
+                <column name="objectid"/>
+            </basic>
+            <basic name="reason">
+                <column name="reason"/>
+            </basic>
+            <many-to-many name="synchronizationErrorFile_SynchronizationError" mapped-by="synchronizationErrorFile_SynchronizationError"/>
+        </attributes>
+    </entity>
+    <entity name="System.ProcessedQueueTask" class="mxhibernate.genentities.system.DbProcessedQueueTask">
+        <table name="system$processedqueuetask"/>
+        <inheritance strategy="JOINED"/>
+        <attributes>
+            <id name="id">
+                <column name="id"/>
+            </id>
+            <basic name="status">
+                <column name="status"/>
+            </basic>
+            <basic name="contextType">
+                <column name="contexttype"/>
+            </basic>
+            <basic name="finished">
+                <column name="finished"/>
+            </basic>
+            <basic name="started">
+                <column name="started"/>
+            </basic>
+            <basic name="retried">
+                <column name="retried"/>
+            </basic>
+            <basic name="arguments">
+                <column name="arguments"/>
+            </basic>
+            <basic name="queueId">
+                <column name="queueid"/>
+            </basic>
+            <basic name="duration">
+                <column name="duration"/>
+            </basic>
+            <basic name="sequence">
+                <column name="sequence"/>
+            </basic>
+            <basic name="created">
+                <column name="created"/>
+            </basic>
+            <basic name="microflowName">
+                <column name="microflowname"/>
+            </basic>
+            <basic name="userActionName">
+                <column name="useractionname"/>
+            </basic>
+            <basic name="XASId">
+                <column name="xasid"/>
+            </basic>
+            <basic name="threadId">
+                <column name="threadid"/>
+            </basic>
+            <basic name="startAt">
+                <column name="startat"/>
+            </basic>
+            <basic name="scheduledEventName">
+                <column name="scheduledeventname"/>
+            </basic>
+            <basic name="contextData">
+                <column name="contextdata"/>
+            </basic>
+            <basic name="errorMessage">
+                <column name="errormessage"/>
+            </basic>
+            <basic name="queueName">
+                <column name="queuename"/>
+            </basic>
+        </attributes>
+    </entity>
+    <entity name="System.Session" class="mxhibernate.genentities.system.DbSession">
+        <table name="system$session"/>
+        <inheritance strategy="JOINED"/>
+        <attributes>
+            <id name="id">
+                <column name="id"/>
+            </id>
+            <basic name="CSRFToken">
+                <column name="csrftoken"/>
+            </basic>
+            <basic name="lastActive">
+                <column name="lastactive"/>
+            </basic>
+            <basic name="sessionId">
+                <column name="sessionid"/>
+            </basic>
+            <many-to-many name="session_User">
+                <join-table name="system$session_user">
+                    <join-column name="system$sessionid"/>
+                    <inverse-join-column name="system$userid"/>
+                </join-table>
+            </many-to-many>
+        </attributes>
+    </entity>
+    <entity name="System.TokenInformation" class="mxhibernate.genentities.system.DbTokenInformation">
+        <table name="system$tokeninformation"/>
+        <inheritance strategy="JOINED"/>
+        <attributes>
+            <id name="id">
+                <column name="id"/>
+            </id>
+            <basic name="expiryDate">
+                <column name="expirydate"/>
+            </basic>
+            <basic name="userAgent">
+                <column name="useragent"/>
+            </basic>
+            <basic name="token">
+                <column name="token"/>
+            </basic>
+            <many-to-many name="tokenInformation_User">
+                <join-table name="system$tokeninformation_user">
+                    <join-column name="system$tokeninformationid"/>
+                    <inverse-join-column name="system$userid"/>
+                </join-table>
+            </many-to-many>
+        </attributes>
+    </entity>
+    <entity name="System.TaskQueueToken" class="mxhibernate.genentities.system.DbTaskQueueToken">
+        <table name="system$taskqueuetoken"/>
+        <inheritance strategy="JOINED"/>
+        <attributes>
+            <id name="id">
+                <column name="id"/>
+            </id>
+            <basic name="XASId">
+                <column name="xasid"/>
+            </basic>
+            <basic name="queueName">
+                <column name="queuename"/>
+            </basic>
+            <basic name="validUntil">
+                <column name="validuntil"/>
+            </basic>
+        </attributes>
+    </entity>
+    <entity name="System.Language" class="mxhibernate.genentities.system.DbLanguage">
+        <table name="system$language"/>
+        <inheritance strategy="JOINED"/>
+        <attributes>
+            <id name="id">
+                <column name="id"/>
+            </id>
+            <basic name="description">
+                <column name="description"/>
+            </basic>
+            <basic name="code">
+                <column name="code"/>
+            </basic>
+            <many-to-many name="user_Language" mapped-by="user_Language"/>
+        </attributes>
+    </entity>
+    <entity name="System.WorkflowUserTask" class="mxhibernate.genentities.system.DbWorkflowUserTask">
+        <table name="system$workflowusertask"/>
+        <inheritance strategy="JOINED"/>
+        <attributes>
+            <id name="id">
+                <column name="id"/>
+            </id>
+            <basic name="description">
+                <column name="description"/>
+            </basic>
+            <basic name="endTime">
+                <column name="endtime"/>
+            </basic>
+            <basic name="outcome">
+                <column name="outcome"/>
+            </basic>
+            <basic name="state">
+                <column name="state"/>
+            </basic>
+            <basic name="startTime">
+                <column name="starttime"/>
+            </basic>
+            <basic name="dueDate">
+                <column name="duedate"/>
+            </basic>
+            <basic name="name">
+                <column name="name"/>
+            </basic>
+            <many-to-many name="workflowUserTask_TargetUsers">
+                <join-table name="system$workflowusertask_targetusers">
+                    <join-column name="system$workflowusertaskid"/>
+                    <inverse-join-column name="system$userid"/>
+                </join-table>
+            </many-to-many>
+            <many-to-many name="workflowUserTask_Assignee">
+                <join-table name="system$workflowusertask_assignee">
+                    <join-column name="system$workflowusertaskid"/>
+                    <inverse-join-column name="system$userid"/>
+                </join-table>
+            </many-to-many>
+            <many-to-many name="workflowUserTask_Workflow">
+                <join-table name="system$workflowusertask_workflow">
+                    <join-column name="system$workflowusertaskid"/>
+                    <inverse-join-column name="system$workflowid"/>
+                </join-table>
+            </many-to-many>
+            <many-to-many name="workflowUserTask_WorkflowUserTaskDefinition">
+                <join-table name="system$workflowusertask_workflowusertaskdefinition">
+                    <join-column name="system$workflowusertaskid"/>
+                    <inverse-join-column name="system$workflowusertaskdefinitionid"/>
+                </join-table>
+            </many-to-many>
+        </attributes>
+    </entity>
+</entity-mappings>

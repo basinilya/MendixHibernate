@@ -5,7 +5,9 @@ import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -61,6 +63,7 @@ public class JdbcEntities {
                 entity.entity_name = rs.getString("entity_name");
                 entity.table_name = rs.getString("table_name");
                 entity.superentity_id = rs.getString("superentity_id");
+                entity.subentity_ids = new HashSet<>();
                 entity.remote = rs.getBoolean("remote");
                 entity.remote_primary_key = rs.getBoolean("remote_primary_key");
 
@@ -68,6 +71,11 @@ public class JdbcEntities {
                 entitiesByName.put(entity.entity_name, entity);
             }
         }
+        entitiesByName.values().forEach(entity -> {
+            if (entity.superentity_id != null) {
+                entitiesById.get(entity.superentity_id).subentity_ids.add(entity.id);
+            }
+        });
 
         sql = makeAttributeSql();
 
@@ -192,6 +200,8 @@ public class JdbcEntities {
         public String table_name;
 
         public String superentity_id;
+
+        public Set<String> subentity_ids;
 
         public boolean remote;
 

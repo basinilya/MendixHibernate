@@ -39,6 +39,16 @@ public class DbQueuedTask
         }
     }
 
+    private long id;
+
+    public long getId() {
+        return this.id;
+    }
+
+    public void setId(long val) {
+        this.id = val;
+    }
+
     private java.lang.String XASId;
 
     public java.lang.String getXASId() {

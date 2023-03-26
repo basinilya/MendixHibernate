@@ -26,6 +26,16 @@ public class DbSession
         }
     }
 
+    private long id;
+
+    public long getId() {
+        return this.id;
+    }
+
+    public void setId(long val) {
+        this.id = val;
+    }
+
     private java.lang.String CSRFToken;
 
     public java.lang.String getCSRFToken() {

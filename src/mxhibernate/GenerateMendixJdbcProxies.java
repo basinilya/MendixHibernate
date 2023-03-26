@@ -38,7 +38,9 @@ import org.apache.commons.text.StringEscapeUtils;
 
 public class GenerateMendixJdbcProxies {
 
-    private static final String GENENTITIES_PACKAGE = "mxhibernate.genentities";
+    public static final String SUFFIX_REVERSE = "_reverse";
+
+    public static final String GENENTITIES_PACKAGE = "mxhibernate.genentities";
 
     private static final Map<String, Map<String, String>> assocsByEntityName = new HashMap<>();
 
@@ -219,7 +221,8 @@ public class GenerateMendixJdbcProxies {
 
         } else {
 
-            if (!"java.lang.Object".equals(proxySuperClassName)) {
+            final boolean isRootEntity = "java.lang.Object".equals(proxySuperClassName);
+            if (!isRootEntity) {
                 final String[] split2 = convertProxyClassName(proxySuperClassName);
                 final String newPackage2 = split2[0];
                 final String dbClassSimpleName2 = split2[1];
@@ -228,7 +231,7 @@ public class GenerateMendixJdbcProxies {
 
             sb.append("\n").append("{");
 
-            appendClassBody(sb, urlClassLoader, proxyClassName, proxyClass);
+            appendClassBody(sb, urlClassLoader, proxyClassName, proxyClass, isRootEntity);
 
         }
 
@@ -251,10 +254,11 @@ public class GenerateMendixJdbcProxies {
             final StringBuilder sb,
             final URLClassLoader urlClassLoader,
             final String proxyClassName,
-            final Class<?> proxyClass)
-                                       throws NoSuchFieldException,
-                                           IllegalAccessException,
-                                           IntrospectionException {
+            final Class<?> proxyClass,
+            final boolean isRootEntity)
+                                        throws NoSuchFieldException,
+                                            IllegalAccessException,
+                                            IntrospectionException {
         final Field fEntityName = proxyClass.getDeclaredField("entityName");
         final String entityName = (String) fEntityName.get(null);
         final String escEntity = StringEscapeUtils.escapeJava(entityName);
@@ -305,15 +309,15 @@ public class GenerateMendixJdbcProxies {
                     + "    }" //
             );
 
+        if (isRootEntity) {
+            appendPropMethods(sb, "long", "getId", "setId", "id");
+        }
+
         final Map<String, Enum<?>> mxMembersByBeanProp =
             Arrays
                 .stream(memberNamesClass.getEnumConstants())
                 .collect(
-                    Collectors
-                        .toMap(
-                            enu -> Introspector
-                                .decapitalize(enu.toString().replaceFirst(".*\\.", "")),
-                            Function.identity()));
+                    Collectors.toMap(enu -> assocToPropName(enu.toString()), Function.identity()));
 
         final BeanInfo info = Introspector.getBeanInfo(proxyClass);
         final PropertyDescriptor[] propertyDescriptors = info.getPropertyDescriptors();
@@ -379,8 +383,7 @@ public class GenerateMendixJdbcProxies {
             final String propName = pair.getKey();
             final String otherEntity = pair.getValue();
 
-            final String[] a = convert2(StringUtils.split(otherEntity, '.'));
-            final String otherClassName = a[0] + '.' + a[1];
+            final String otherClassName = entityNameToNewClassName(otherEntity);
             final String newPropTypeName = "java.util.Set<" + otherClassName + ">";
 
             final String baseName = StringUtils.capitalize(propName);
@@ -393,13 +396,22 @@ public class GenerateMendixJdbcProxies {
                 appendPropMethods(
                     sb,
                     newPropTypeName,
-                    getterName + "_reverse",
-                    setterName + "_reverse",
-                    propName + "_reverse");
+                    getterName + SUFFIX_REVERSE,
+                    setterName + SUFFIX_REVERSE,
+                    propName + SUFFIX_REVERSE);
             }
 
         }
 
+    }
+
+    public static String assocToPropName(final String assoc) {
+        return Introspector.decapitalize(assoc.replaceFirst(".*\\.", ""));
+    }
+
+    public static String entityNameToNewClassName(final String entityName) {
+        final String[] a = convert2(StringUtils.split(entityName, '.'));
+        return a[0] + '.' + a[1];
     }
 
     private static void appendPropMethods(
@@ -407,14 +419,14 @@ public class GenerateMendixJdbcProxies {
             final String propTypeName,
             final String getterName,
             final String setterName,
-            final String propName) {
+            final String javaPropName) {
         sb
             .append(
                 "\n"//
                     + "\n" + "    private ")
             .append(propTypeName)
             .append(" ")
-            .append(propName)
+            .append(javaPropName)
             .append(";");
 
         sb
@@ -427,7 +439,7 @@ public class GenerateMendixJdbcProxies {
             .append(
                 "() {" //
                     + "\n" + "        return this.")
-            .append(propName)
+            .append(javaPropName)
             .append(
                 ";" //
                     + "\n" + "    }");
@@ -442,7 +454,7 @@ public class GenerateMendixJdbcProxies {
             .append(
                 " val) {" //
                     + "\n" + "        this.")
-            .append(propName)
+            .append(javaPropName)
             .append(
                 " = val;" //
                     + "\n" + "    }");
