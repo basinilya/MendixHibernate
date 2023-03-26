@@ -256,6 +256,20 @@ public class MendixHibernate {
                     .stream()
                     .map(DbUser::getName)
                     .collect(Collectors.joining(",")));
+        System.out
+            .println(
+                "    grantableRoles: " + obj
+                    .getGrantableRoles()
+                    .stream()
+                    .map(DbUserRole::getName)
+                    .collect(Collectors.joining(",")));
+        System.out
+            .println(
+                "    grantableRoles reverse: " + obj
+                    .getGrantableRoles_reverse()
+                    .stream()
+                    .map(DbUserRole::getName)
+                    .collect(Collectors.joining(",")));
     }
 
     private static void logUser(final EntityManager entityManager, final DbUser obj) {
@@ -506,12 +520,13 @@ public class MendixHibernate {
                 final JaxbManyToMany manyToMany = new JaxbManyToMany();
                 final String ownerPropName =
                     GenerateMendixJdbcProxies.assocToPropName(mxAssoc.association_name);
-                remainingDeclaredJavaProps.remove(ownerPropName);
 
                 final String propName =
                     mxEntity.assocWithChildByName.containsKey(mxAssoc.association_name)
                         ? ownerPropName + GenerateMendixJdbcProxies.SUFFIX_REVERSE
                         : ownerPropName;
+                remainingDeclaredJavaProps.remove(propName);
+
                 manyToMany.setName(propName);
                 manyToMany.setMappedBy(ownerPropName);
                 attributes.getManyToManyAttributes().add(manyToMany);

@@ -221,7 +221,6 @@
             </many-to-many>
             <many-to-many name="grantableRoles_reverse" mapped-by="grantableRoles"/>
             <many-to-many name="userRoles" mapped-by="userRoles"/>
-            <transient name="grantableRoles_reverse"/>
         </attributes>
     </entity>
     <entity name="System.Image" class="mxhibernate.genentities.system.DbImage">
@@ -300,8 +299,6 @@
             </many-to-many>
             <many-to-many name="many_Many_reverse" mapped-by="many_Many"/>
             <many-to-many name="one_One_reverse" mapped-by="one_One"/>
-            <transient name="many_Many_reverse"/>
-            <transient name="one_One_reverse"/>
         </attributes>
     </entity>
     <entity name="System.QueuedTask" class="mxhibernate.genentities.system.DbQueuedTask">
