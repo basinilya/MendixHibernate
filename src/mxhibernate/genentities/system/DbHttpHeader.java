@@ -39,4 +39,11 @@ public class DbHttpHeader
 
     public void setValue(java.lang.String val) {
     }
+
+    public java.util.Set<mxhibernate.genentities.system.DbHttpMessage> getHttpHeaders() {
+        return null;
+    }
+
+    public void setHttpHeaders(java.util.Set<mxhibernate.genentities.system.DbHttpMessage> val) {
+    }
 }

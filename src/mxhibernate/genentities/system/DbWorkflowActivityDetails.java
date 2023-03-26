@@ -54,4 +54,25 @@ public class DbWorkflowActivityDetails
 
     public void setExistsInCurrentVersion(java.lang.Boolean val) {
     }
+
+    public java.util.Set<mxhibernate.genentities.system.DbWorkflowCurrentActivity> getWorkflowCurrentActivity_JumpToTarget() {
+        return null;
+    }
+
+    public void setWorkflowCurrentActivity_JumpToTarget(java.util.Set<mxhibernate.genentities.system.DbWorkflowCurrentActivity> val) {
+    }
+
+    public java.util.Set<mxhibernate.genentities.system.DbWorkflowCurrentActivity> getWorkflowCurrentActivity_ActivityDetails() {
+        return null;
+    }
+
+    public void setWorkflowCurrentActivity_ActivityDetails(java.util.Set<mxhibernate.genentities.system.DbWorkflowCurrentActivity> val) {
+    }
+
+    public java.util.Set<mxhibernate.genentities.system.DbWorkflowCurrentActivity> getWorkflowCurrentActivity_ApplicableTargets() {
+        return null;
+    }
+
+    public void setWorkflowCurrentActivity_ApplicableTargets(java.util.Set<mxhibernate.genentities.system.DbWorkflowCurrentActivity> val) {
+    }
 }

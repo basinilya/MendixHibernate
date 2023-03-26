@@ -38,4 +38,11 @@ public class DbLanguage
 
     public void setDescription(java.lang.String val) {
     }
+
+    public java.util.Set<mxhibernate.genentities.system.DbUser> getUser_Language() {
+        return null;
+    }
+
+    public void setUser_Language(java.util.Set<mxhibernate.genentities.system.DbUser> val) {
+    }
 }

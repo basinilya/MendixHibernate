@@ -63,4 +63,11 @@ public class DbScheduledEventInformation
 
     public void setStatus(java.lang.String val) {
     }
+
+    public java.util.Set<mxhibernate.genentities.system.DbXASInstance> getScheduledEventInformation_XASInstance() {
+        return null;
+    }
+
+    public void setScheduledEventInformation_XASInstance(java.util.Set<mxhibernate.genentities.system.DbXASInstance> val) {
+    }
 }

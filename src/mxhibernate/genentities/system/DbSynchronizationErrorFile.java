@@ -29,4 +29,11 @@ public class DbSynchronizationErrorFile extends mxhibernate.genentities.system.D
         }
     }
 
+
+    public java.util.Set<mxhibernate.genentities.system.DbSynchronizationError> getSynchronizationErrorFile_SynchronizationError() {
+        return null;
+    }
+
+    public void setSynchronizationErrorFile_SynchronizationError(java.util.Set<mxhibernate.genentities.system.DbSynchronizationError> val) {
+    }
 }

@@ -46,4 +46,11 @@ public class DbTimeZone
 
     public void setRawOffset(java.lang.Integer val) {
     }
+
+    public java.util.Set<mxhibernate.genentities.system.DbUser> getUser_TimeZone() {
+        return null;
+    }
+
+    public void setUser_TimeZone(java.util.Set<mxhibernate.genentities.system.DbUser> val) {
+    }
 }

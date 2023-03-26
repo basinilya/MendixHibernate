@@ -70,7 +70,7 @@ public class GenerateMendixJdbcProxies {
         final URL[] urls = new URL[] { bpClasses };
         try (URLClassLoader urlClassLoader = new URLClassLoader(urls);) {
             for (final String proxyClassName : proxyClassNames) {
-                collectAssociations(fBpeSources0, urlClassLoader, proxyClassName);
+                collectAssociations(urlClassLoader, proxyClassName);
             }
             for (final String proxyClassName : proxyClassNames) {
                 generateJavaFile(fBpeSources0, urlClassLoader, proxyClassName);
@@ -80,7 +80,6 @@ public class GenerateMendixJdbcProxies {
     }
 
     private static void collectAssociations(
-            final File fBpeSources0,
             final URLClassLoader urlClassLoader,
             final String proxyClassName)
                                          throws ClassNotFoundException,
@@ -95,8 +94,8 @@ public class GenerateMendixJdbcProxies {
             return;
         }
 
-        final HashMap<String, String> assocs = new HashMap<>();
-        assocsByEntityName.put((String) proxyClass.getField("entityName").get(null), assocs);
+        final String entityName = getEntityName(proxyClass);
+        final Map<String, String> assocs = getAssocs(entityName);
 
         final Class<Enum<?>> memberNamesClass =
             getMemberNamesClass(urlClassLoader, proxyClass.getName());
@@ -162,16 +161,20 @@ public class GenerateMendixJdbcProxies {
             }
 
             final String associatedEntityName;
-            associatedEntityName = (String) elementClass.getField("entityName").get(null);
+            associatedEntityName = getEntityName(elementClass);
 
             final String propName = pd.getName();
-            final Enum<?> enuAssoc = mxMembersByBeanProp.get(propName);
+            // final Enum<?> enuAssoc = mxMembersByBeanProp.get(propName);
 
             assocs.put(propName, associatedEntityName);
 
-            // System.out.println(propName + ": " + propertyType);
-            // propertyType.toString();
+            final Map<String, String> otherSide = getAssocs(associatedEntityName);
+            otherSide.put(propName, entityName);
         }
+    }
+
+    private static Map<String, String> getAssocs(final String entityName) {
+        return assocsByEntityName.computeIfAbsent(entityName, unused -> new HashMap<>());
     }
 
     private static void generateJavaFile(
@@ -367,31 +370,61 @@ public class GenerateMendixJdbcProxies {
             final String getterName = "get" + baseName;
             final String setterName = "set" + baseName;
 
-            sb
-                .append(
-                    "\n"//
-                        + "\n" + "    public ")
-                .append(newPropClassName)
-                .append(" ")
-                .append(getterName)
-                .append(
-                    "() {" //
-                        + "\n" + "        return null;" //
-                        + "\n" + "    }");
-
-            sb
-                .append(
-                    "\n"//
-                        + "\n" + "    public void ")
-                .append(setterName)
-                .append("(")
-                .append(newPropClassName)
-                .append(
-                    " val) {" //
-                        + "\n" + "    }");
+            appendPropMethods(sb, newPropClassName, getterName, setterName);
 
         }
 
+        final Map<String, String> assocs = assocsByEntityName.get(entityName);
+        for (final Entry<String, String> pair : assocs.entrySet()) {
+            final String propName = pair.getKey();
+            final String otherEntity = pair.getValue();
+
+            final String[] a = convert2(StringUtils.split(otherEntity, '.'));
+            final String otherClassName = a[0] + '.' + a[1];
+            final String newPropClassName = "java.util.Set<" + otherClassName + ">";
+
+            final String baseName = StringUtils.capitalize(propName);
+            final String getterName = "get" + baseName;
+            final String setterName = "set" + baseName;
+
+            appendPropMethods(sb, newPropClassName, getterName, setterName);
+
+            if (otherEntity.equals(entityName)) {
+                appendPropMethods(sb, newPropClassName, getterName + "_reverse", setterName + "_reverse");
+            }
+
+        }
+
+
+    }
+
+    private static void appendPropMethods(
+            final StringBuilder sb,
+            final String newPropClassName,
+            final String getterName,
+            final String setterName) {
+        sb
+            .append(
+                "\n"//
+                    + "\n" + "    public ")
+            .append(newPropClassName)
+            .append(" ")
+            .append(getterName)
+            .append(
+                "() {" //
+                    + "\n" + "        return null;" //
+                    + "\n" + "    }");
+
+        sb
+            .append(
+                "\n"//
+                    + "\n" + "    public void ")
+            .append(setterName)
+            .append("(")
+            .append(newPropClassName)
+            .append(
+                " val) {" //
+                    + "\n" + "    }");
     }
 
     private static void appendEnumClassBody(
@@ -455,6 +488,12 @@ public class GenerateMendixJdbcProxies {
                     + "    }\n");
     }
 
+    private static String getEntityName(final Class<?> proxyClass)
+                                                                   throws IllegalAccessException,
+                                                                       NoSuchFieldException {
+        return (String) proxyClass.getField("entityName").get(null);
+    }
+
     private static void deleteProxySources(final File fBpeSources) throws IOException {
         // delete .java files and empty subdirs
         // keep source control files
@@ -476,7 +515,11 @@ public class GenerateMendixJdbcProxies {
     static String[] convertProxyClassName(final String proxyClassName) {
 
         final String[] split = StringUtils.splitByWholeSeparator(proxyClassName, ".proxies.");
-        final String sMxModuleDir = split[0];
+        return convert2(split);
+    }
+
+    private static String[] convert2(final String[] split) {
+        final String sMxModuleDir = split[0].toLowerCase();
         final String proxyClassSimpleName = split[1];
         final String dbClassSimpleName = "Db" + proxyClassSimpleName;
         final String newPackage = GENENTITIES_PACKAGE + "." + sMxModuleDir;

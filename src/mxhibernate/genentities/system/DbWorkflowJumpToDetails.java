@@ -32,4 +32,18 @@ public class DbWorkflowJumpToDetails
 
     public void setError(java.lang.String val) {
     }
+
+    public java.util.Set<mxhibernate.genentities.system.DbWorkflow> getWorkflowJumpToDetails_Workflow() {
+        return null;
+    }
+
+    public void setWorkflowJumpToDetails_Workflow(java.util.Set<mxhibernate.genentities.system.DbWorkflow> val) {
+    }
+
+    public java.util.Set<mxhibernate.genentities.system.DbWorkflowCurrentActivity> getWorkflowJumpToDetails_CurrentActivities() {
+        return null;
+    }
+
+    public void setWorkflowJumpToDetails_CurrentActivities(java.util.Set<mxhibernate.genentities.system.DbWorkflowCurrentActivity> val) {
+    }
 }

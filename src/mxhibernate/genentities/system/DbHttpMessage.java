@@ -38,4 +38,11 @@ public class DbHttpMessage
 
     public void setHttpVersion(java.lang.String val) {
     }
+
+    public java.util.Set<mxhibernate.genentities.system.DbHttpHeader> getHttpHeaders() {
+        return null;
+    }
+
+    public void setHttpHeaders(java.util.Set<mxhibernate.genentities.system.DbHttpHeader> val) {
+    }
 }

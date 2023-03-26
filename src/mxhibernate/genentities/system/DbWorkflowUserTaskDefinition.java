@@ -39,4 +39,18 @@ public class DbWorkflowUserTaskDefinition
 
     public void setName(java.lang.String val) {
     }
+
+    public java.util.Set<mxhibernate.genentities.system.DbWorkflowUserTask> getWorkflowUserTask_WorkflowUserTaskDefinition() {
+        return null;
+    }
+
+    public void setWorkflowUserTask_WorkflowUserTaskDefinition(java.util.Set<mxhibernate.genentities.system.DbWorkflowUserTask> val) {
+    }
+
+    public java.util.Set<mxhibernate.genentities.system.DbWorkflowDefinition> getWorkflowUserTaskDefinition_WorkflowDefinition() {
+        return null;
+    }
+
+    public void setWorkflowUserTaskDefinition_WorkflowDefinition(java.util.Set<mxhibernate.genentities.system.DbWorkflowDefinition> val) {
+    }
 }

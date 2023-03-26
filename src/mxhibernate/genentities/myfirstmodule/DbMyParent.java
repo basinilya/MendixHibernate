@@ -33,4 +33,39 @@ public class DbMyParent
 
     public void setAttribute(java.lang.String val) {
     }
+
+    public java.util.Set<mxhibernate.genentities.myfirstmodule.DbMyChild> getMyParent_MyChild() {
+        return null;
+    }
+
+    public void setMyParent_MyChild(java.util.Set<mxhibernate.genentities.myfirstmodule.DbMyChild> val) {
+    }
+
+    public java.util.Set<mxhibernate.genentities.myfirstmodule.DbMyParent> getMany_Many() {
+        return null;
+    }
+
+    public void setMany_Many(java.util.Set<mxhibernate.genentities.myfirstmodule.DbMyParent> val) {
+    }
+
+    public java.util.Set<mxhibernate.genentities.myfirstmodule.DbMyParent> getMany_Many_reverse() {
+        return null;
+    }
+
+    public void setMany_Many_reverse(java.util.Set<mxhibernate.genentities.myfirstmodule.DbMyParent> val) {
+    }
+
+    public java.util.Set<mxhibernate.genentities.myfirstmodule.DbMyParent> getOne_One() {
+        return null;
+    }
+
+    public void setOne_One(java.util.Set<mxhibernate.genentities.myfirstmodule.DbMyParent> val) {
+    }
+
+    public java.util.Set<mxhibernate.genentities.myfirstmodule.DbMyParent> getOne_One_reverse() {
+        return null;
+    }
+
+    public void setOne_One_reverse(java.util.Set<mxhibernate.genentities.myfirstmodule.DbMyParent> val) {
+    }
 }

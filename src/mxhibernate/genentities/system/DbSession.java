@@ -47,4 +47,11 @@ public class DbSession
 
     public void setSessionId(java.lang.String val) {
     }
+
+    public java.util.Set<mxhibernate.genentities.system.DbUser> getSession_User() {
+        return null;
+    }
+
+    public void setSession_User(java.util.Set<mxhibernate.genentities.system.DbUser> val) {
+    }
 }

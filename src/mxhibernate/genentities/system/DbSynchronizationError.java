@@ -54,4 +54,11 @@ public class DbSynchronizationError
 
     public void setReason(java.lang.String val) {
     }
+
+    public java.util.Set<mxhibernate.genentities.system.DbSynchronizationErrorFile> getSynchronizationErrorFile_SynchronizationError() {
+        return null;
+    }
+
+    public void setSynchronizationErrorFile_SynchronizationError(java.util.Set<mxhibernate.genentities.system.DbSynchronizationErrorFile> val) {
+    }
 }

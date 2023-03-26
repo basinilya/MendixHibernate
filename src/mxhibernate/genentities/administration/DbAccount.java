@@ -58,4 +58,11 @@ public class DbAccount extends mxhibernate.genentities.system.DbUser
 
     public void setIsLocalUser(java.lang.Boolean val) {
     }
+
+    public java.util.Set<mxhibernate.genentities.administration.DbAccountPasswordData> getAccountPasswordData_Account() {
+        return null;
+    }
+
+    public void setAccountPasswordData_Account(java.util.Set<mxhibernate.genentities.administration.DbAccountPasswordData> val) {
+    }
 }

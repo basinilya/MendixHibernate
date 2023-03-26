@@ -39,4 +39,11 @@ public class DbUserReportInfo
 
     public void setUserType(java.lang.String val) {
     }
+
+    public java.util.Set<mxhibernate.genentities.system.DbUser> getUserReportInfo_User() {
+        return null;
+    }
+
+    public void setUserReportInfo_User(java.util.Set<mxhibernate.genentities.system.DbUser> val) {
+    }
 }

@@ -62,4 +62,11 @@ public class DbXASInstance
 
     public void setPartnerName(java.lang.String val) {
     }
+
+    public java.util.Set<mxhibernate.genentities.system.DbScheduledEventInformation> getScheduledEventInformation_XASInstance() {
+        return null;
+    }
+
+    public void setScheduledEventInformation_XASInstance(java.util.Set<mxhibernate.genentities.system.DbScheduledEventInformation> val) {
+    }
 }

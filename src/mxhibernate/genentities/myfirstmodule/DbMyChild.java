@@ -31,4 +31,11 @@ public class DbMyChild
 
     public void setAttribute(java.lang.String val) {
     }
+
+    public java.util.Set<mxhibernate.genentities.myfirstmodule.DbMyParent> getMyParent_MyChild() {
+        return null;
+    }
+
+    public void setMyParent_MyChild(java.util.Set<mxhibernate.genentities.myfirstmodule.DbMyParent> val) {
+    }
 }

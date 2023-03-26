@@ -47,4 +47,11 @@ public class DbAccountPasswordData
 
     public void setOldPassword(java.lang.String val) {
     }
+
+    public java.util.Set<mxhibernate.genentities.administration.DbAccount> getAccountPasswordData_Account() {
+        return null;
+    }
+
+    public void setAccountPasswordData_Account(java.util.Set<mxhibernate.genentities.administration.DbAccount> val) {
+    }
 }

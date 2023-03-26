@@ -47,4 +47,25 @@ public class DbUserRole
 
     public void setName(java.lang.String val) {
     }
+
+    public java.util.Set<mxhibernate.genentities.system.DbUser> getUserRoles() {
+        return null;
+    }
+
+    public void setUserRoles(java.util.Set<mxhibernate.genentities.system.DbUser> val) {
+    }
+
+    public java.util.Set<mxhibernate.genentities.system.DbUserRole> getGrantableRoles() {
+        return null;
+    }
+
+    public void setGrantableRoles(java.util.Set<mxhibernate.genentities.system.DbUserRole> val) {
+    }
+
+    public java.util.Set<mxhibernate.genentities.system.DbUserRole> getGrantableRoles_reverse() {
+        return null;
+    }
+
+    public void setGrantableRoles_reverse(java.util.Set<mxhibernate.genentities.system.DbUserRole> val) {
+    }
 }

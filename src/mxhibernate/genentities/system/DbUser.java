@@ -97,4 +97,60 @@ public class DbUser
 
     public void setWebServiceUser(java.lang.Boolean val) {
     }
+
+    public java.util.Set<mxhibernate.genentities.system.DbUserRole> getUserRoles() {
+        return null;
+    }
+
+    public void setUserRoles(java.util.Set<mxhibernate.genentities.system.DbUserRole> val) {
+    }
+
+    public java.util.Set<mxhibernate.genentities.system.DbUserReportInfo> getUserReportInfo_User() {
+        return null;
+    }
+
+    public void setUserReportInfo_User(java.util.Set<mxhibernate.genentities.system.DbUserReportInfo> val) {
+    }
+
+    public java.util.Set<mxhibernate.genentities.system.DbTokenInformation> getTokenInformation_User() {
+        return null;
+    }
+
+    public void setTokenInformation_User(java.util.Set<mxhibernate.genentities.system.DbTokenInformation> val) {
+    }
+
+    public java.util.Set<mxhibernate.genentities.system.DbTimeZone> getUser_TimeZone() {
+        return null;
+    }
+
+    public void setUser_TimeZone(java.util.Set<mxhibernate.genentities.system.DbTimeZone> val) {
+    }
+
+    public java.util.Set<mxhibernate.genentities.system.DbWorkflowUserTask> getWorkflowUserTask_TargetUsers() {
+        return null;
+    }
+
+    public void setWorkflowUserTask_TargetUsers(java.util.Set<mxhibernate.genentities.system.DbWorkflowUserTask> val) {
+    }
+
+    public java.util.Set<mxhibernate.genentities.system.DbWorkflowUserTask> getWorkflowUserTask_Assignee() {
+        return null;
+    }
+
+    public void setWorkflowUserTask_Assignee(java.util.Set<mxhibernate.genentities.system.DbWorkflowUserTask> val) {
+    }
+
+    public java.util.Set<mxhibernate.genentities.system.DbLanguage> getUser_Language() {
+        return null;
+    }
+
+    public void setUser_Language(java.util.Set<mxhibernate.genentities.system.DbLanguage> val) {
+    }
+
+    public java.util.Set<mxhibernate.genentities.system.DbSession> getSession_User() {
+        return null;
+    }
+
+    public void setSession_User(java.util.Set<mxhibernate.genentities.system.DbSession> val) {
+    }
 }

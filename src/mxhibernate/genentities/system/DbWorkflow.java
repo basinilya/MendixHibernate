@@ -95,4 +95,25 @@ public class DbWorkflow
 
     public void setState(java.lang.String val) {
     }
+
+    public java.util.Set<mxhibernate.genentities.system.DbWorkflowDefinition> getWorkflow_WorkflowDefinition() {
+        return null;
+    }
+
+    public void setWorkflow_WorkflowDefinition(java.util.Set<mxhibernate.genentities.system.DbWorkflowDefinition> val) {
+    }
+
+    public java.util.Set<mxhibernate.genentities.system.DbWorkflowUserTask> getWorkflowUserTask_Workflow() {
+        return null;
+    }
+
+    public void setWorkflowUserTask_Workflow(java.util.Set<mxhibernate.genentities.system.DbWorkflowUserTask> val) {
+    }
+
+    public java.util.Set<mxhibernate.genentities.system.DbWorkflowJumpToDetails> getWorkflowJumpToDetails_Workflow() {
+        return null;
+    }
+
+    public void setWorkflowJumpToDetails_Workflow(java.util.Set<mxhibernate.genentities.system.DbWorkflowJumpToDetails> val) {
+    }
 }
