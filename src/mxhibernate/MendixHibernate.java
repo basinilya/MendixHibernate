@@ -7,6 +7,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.lang.reflect.Method;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
@@ -47,6 +48,7 @@ import org.hibernate.boot.jaxb.mapping.JaxbJoinTable;
 import org.hibernate.boot.jaxb.mapping.JaxbManyToMany;
 import org.hibernate.boot.jaxb.mapping.JaxbPersistenceUnitMetadata;
 import org.hibernate.boot.jaxb.mapping.JaxbTable;
+import org.hibernate.boot.jaxb.mapping.JaxbTransient;
 import org.hibernate.boot.jaxb.spi.Binding;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import org.hibernate.boot.registry.classloading.internal.ClassLoaderServiceImpl;
@@ -428,11 +430,13 @@ public class MendixHibernate {
 
             final Class<?> beanClass = Class.forName(beanClassName);
             final BeanInfo info = Introspector.getBeanInfo(beanClass);
-            final Set<String> javaProps =
+            final Set<String> remainingDeclaredJavaProps =
                 Arrays
                     .stream(info.getPropertyDescriptors())
+                    .filter(pd -> isDeclared(pd, beanClass))
                     .map(PropertyDescriptor::getName)
-                    .collect(Collectors.toSet());
+                    .filter(s -> !MxHibernateConstants.ID_COLUMN.equals(s))
+                    .collect(Collectors.toCollection(() -> new HashSet<>()));
 
             for (final Attribute mxAttribute : mxEntity.attributesByName.values()) {
                 final String mxAttributeName = mxAttribute.attribute_name;
@@ -442,7 +446,7 @@ public class MendixHibernate {
                     continue;
                 }
 
-                if (!javaProps.contains(javaPropName)) {
+                if (!remainingDeclaredJavaProps.remove(javaPropName)) {
                     if (!entityName.startsWith(MxHibernateConstants.MODULE_SYSTEM_PREF)) {
                         throw new RuntimeException(
                             "java property not found: " + beanClassName + "." + javaPropName);
@@ -474,10 +478,12 @@ public class MendixHibernate {
                 if (blackListEntities.contains(mxAssoc.childEntity.entity_name)) {
                     continue;
                 }
+                final String javaPropName =
+                    GenerateMendixJdbcProxies.assocToPropName(mxAssoc.association_name);
+                remainingDeclaredJavaProps.remove(javaPropName);
 
                 final JaxbManyToMany manyToMany = new JaxbManyToMany();
-                manyToMany
-                    .setName(GenerateMendixJdbcProxies.assocToPropName(mxAssoc.association_name));
+                manyToMany.setName(javaPropName);
                 final JaxbJoinTable joinTable = new JaxbJoinTable();
                 joinTable.setName(mxAssoc.table_name);
                 final JaxbJoinColumn joinColumn = new JaxbJoinColumn();
@@ -500,6 +506,8 @@ public class MendixHibernate {
                 final JaxbManyToMany manyToMany = new JaxbManyToMany();
                 final String ownerPropName =
                     GenerateMendixJdbcProxies.assocToPropName(mxAssoc.association_name);
+                remainingDeclaredJavaProps.remove(ownerPropName);
+
                 final String propName =
                     mxEntity.assocWithChildByName.containsKey(mxAssoc.association_name)
                         ? ownerPropName + GenerateMendixJdbcProxies.SUFFIX_REVERSE
@@ -507,6 +515,13 @@ public class MendixHibernate {
                 manyToMany.setName(propName);
                 manyToMany.setMappedBy(ownerPropName);
                 attributes.getManyToManyAttributes().add(manyToMany);
+            }
+
+            for (final String remainingDeclaredJavaProp : remainingDeclaredJavaProps) {
+                // calculated reference to non-persistable
+                final JaxbTransient transient1 = new JaxbTransient();
+                transient1.setName(remainingDeclaredJavaProp);
+                attributes.getTransients().add(transient1);
             }
 
             entity.setAttributes(attributes);
@@ -517,6 +532,12 @@ public class MendixHibernate {
 
         dumpconf(ormRoot, new FileOutputStream("generated-mapping-2.xml"));
         return ormRoot;
+    }
+
+    private static boolean isDeclared(final PropertyDescriptor pd, final Class<?> beanClass) {
+        final Method readMethod = pd.getReadMethod();
+        final Method anyMethod = readMethod == null ? pd.getWriteMethod() : readMethod;
+        return beanClass.equals(anyMethod.getDeclaringClass());
     }
 
     /** mimic Mendix Database Connector module */
