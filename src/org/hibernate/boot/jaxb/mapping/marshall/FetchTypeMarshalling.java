@@ -3,9 +3,7 @@ package org.hibernate.boot.jaxb.mapping.marshall;
 import jakarta.persistence.FetchType;
 
 /**
- * JAXB marshalling for {@link FetchType}
- *
- * @author Steve Ebersole
+ * fix for https://hibernate.atlassian.net/browse/HHH-16373
  */
 public class FetchTypeMarshalling {
 

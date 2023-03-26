@@ -31,6 +31,12 @@ import com.zaxxer.hikari.HikariDataSource;
 
 import mxhibernate.JdbcEntities.Entity;
 
+/**
+ * TODO: this is supposed to supplement GenerateMendixJdbcProxies with the hidden system entities
+ * like System.WorkflowVersion, hidden associations like System.owner, and hidden attributes like
+ * changedDate and __FileName__ <br>
+ * On the other hand, the DB does not contain the info about Enums, but the Mendix proxies do.
+ */
 public class GenerateMendixJdbcProxiesFromDb {
 
     private static final String GENENTITIES_PACKAGE = "mxhibernate.genentities";
@@ -45,7 +51,7 @@ public class GenerateMendixJdbcProxiesFromDb {
         //
     }
 
-    public static void main(final String[] args) throws Exception {
+    public static void main_disabled(final String[] args) throws Exception {
 
         if (args.length == 0) {
             initLocalDbDetails();

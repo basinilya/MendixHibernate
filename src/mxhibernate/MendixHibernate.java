@@ -79,6 +79,10 @@ import mxhibernate.genentities.administration.DbAccount;
 import mxhibernate.genentities.system.DbUser;
 import mxhibernate.genentities.system.DbUserRole;
 
+/**
+ * Generate Hibernate mapping XML out of Mendix database and POJOs generated with
+ * {@link GenerateMendixJdbcProxies}.
+ */
 public class MendixHibernate {
 
     private static String jdbcUrl;
@@ -393,7 +397,7 @@ public class MendixHibernate {
             try {
                 Class.forName(newClassName);
             } catch (final ClassNotFoundException e) {
-                if (!entityName.startsWith(MxHibernateConstants.MODULE_SYSTEM_PREF)) {
+                if (!entityName.startsWith(MxMetaModelConstants.MODULE_SYSTEM_PREF)) {
                     throw e;
                 }
                 // entities like System.WorkflowVersion have no proxies
@@ -427,16 +431,16 @@ public class MendixHibernate {
 
                 if (!mxEntity.subentity_ids.isEmpty()) {
                     final JaxbDiscriminatorColumn discriminator = new JaxbDiscriminatorColumn();
-                    discriminator.setName(MxHibernateConstants.DISCRIMINATOR_COLUMN);
+                    discriminator.setName(MxMetaModelConstants.DISCRIMINATOR_COLUMN);
                     discriminator.setDiscriminatorType(DiscriminatorType.STRING);
                     entity.setDiscriminatorColumn(discriminator);
                 }
 
                 final JaxbId id = new JaxbId();
-                id.setName(MxHibernateConstants.ID_COLUMN);
+                id.setName(MxMetaModelConstants.ID_COLUMN);
                 {
                     final JaxbColumn column = new JaxbColumn();
-                    column.setName(MxHibernateConstants.ID_COLUMN);
+                    column.setName(MxMetaModelConstants.ID_COLUMN);
                     id.setColumn(column);
                 }
                 attributes.getId().add(id);
@@ -449,19 +453,19 @@ public class MendixHibernate {
                     .stream(info.getPropertyDescriptors())
                     .filter(pd -> isDeclared(pd, beanClass))
                     .map(PropertyDescriptor::getName)
-                    .filter(s -> !MxHibernateConstants.ID_COLUMN.equals(s))
+                    .filter(s -> !MxMetaModelConstants.ID_COLUMN.equals(s))
                     .collect(Collectors.toCollection(() -> new HashSet<>()));
 
             for (final Attribute mxAttribute : mxEntity.attributesByName.values()) {
                 final String mxAttributeName = mxAttribute.attribute_name;
                 final String javaPropName = Introspector.decapitalize(mxAttributeName);
 
-                if (MxHibernateConstants.ATTR_DISCRIMINATOR.equals(mxAttributeName)) {
+                if (MxMetaModelConstants.ATTR_DISCRIMINATOR.equals(mxAttributeName)) {
                     continue;
                 }
 
                 if (!remainingDeclaredJavaProps.remove(javaPropName)) {
-                    if (!entityName.startsWith(MxHibernateConstants.MODULE_SYSTEM_PREF)) {
+                    if (!entityName.startsWith(MxMetaModelConstants.MODULE_SYSTEM_PREF)) {
                         throw new RuntimeException(
                             "java property not found: " + beanClassName + "." + javaPropName);
                     }
@@ -469,10 +473,10 @@ public class MendixHibernate {
                     continue;
                 }
 
-                if (MxHibernateConstants.ATTR_DISCRIMINATOR.equals(mxAttributeName)
-                    || MxHibernateConstants.SYSTEM_ATTRS.contains(mxAttributeName)
-                    || MxHibernateConstants.ENTITY_FILEDOCUMENT.equals(entityName)
-                        && MxHibernateConstants.FILEDOCUMENT_SYSTEM_ATTRS
+                if (MxMetaModelConstants.ATTR_DISCRIMINATOR.equals(mxAttributeName)
+                    || MxMetaModelConstants.SYSTEM_ATTRS.contains(mxAttributeName)
+                    || MxMetaModelConstants.ENTITY_FILEDOCUMENT.equals(entityName)
+                        && MxMetaModelConstants.FILEDOCUMENT_SYSTEM_ATTRS
                             .contains(mxAttributeName)) {
                     // continue;
                 }
@@ -486,7 +490,7 @@ public class MendixHibernate {
             }
 
             for (final Association mxAssoc : mxEntity.assocWithChildByName.values()) {
-                if (MxHibernateConstants.SYSTEM_ASSOCS.contains(mxAssoc.association_name)) {
+                if (MxMetaModelConstants.SYSTEM_ASSOCS.contains(mxAssoc.association_name)) {
                     continue;
                 }
                 if (blackListEntities.contains(mxAssoc.childEntity.entity_name)) {
@@ -510,7 +514,7 @@ public class MendixHibernate {
                 attributes.getManyToManyAttributes().add(manyToMany);
             }
             for (final Association mxAssoc : mxEntity.assocWithParentByName.values()) {
-                if (MxHibernateConstants.SYSTEM_ASSOCS.contains(mxAssoc.association_name)) {
+                if (MxMetaModelConstants.SYSTEM_ASSOCS.contains(mxAssoc.association_name)) {
                     // User has owner
                     continue;
                 }

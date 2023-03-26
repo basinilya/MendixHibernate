@@ -36,11 +36,31 @@ import org.apache.commons.io.file.PathUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.StringEscapeUtils;
 
+/**
+ * Generate Enums and Hibernate POJOs out of Mendix proxy classes. The classes have no annotations
+ * because physical table and column names differ among environments. The actual mapping XML is
+ * generated with {@link MendixHibernate} <br>
+ * A Mendix proxy class name is transformed so the word ".proxy" is removed from the package name
+ * and the simple class name gets prefixed with the word "Db"<br>
+ * All existing java files in the target package will be deleted.<br>
+ * The hidden system entities like System.WorkflowVersion, hidden associations like System.owner,
+ * and hidden attributes like changedDate and __FileName__ are not supported yet.<br>
+ * For simplicity, all associations are considered many-to-many.
+ */
 public class GenerateMendixJdbcProxies {
 
+    /** Java sources root for the generated sources */
+    private static final String GENENTITIES_ROOT_DIR = "./src";
+
+    /** Base Java package for the generated sources */
+    public static final String GENENTITIES_PACKAGE = "mxhibernate.genentities";
+
+    private static final String COMPILED_CLASSES_DIR = "./DummyMendixApp/deployment/run/bin";
+
+    /** Name suffix for the second bean property of a self-reference */
     public static final String SUFFIX_REVERSE = "_reverse";
 
-    public static final String GENENTITIES_PACKAGE = "mxhibernate.genentities";
+    private static final String CLASSNAME_PREFIX = "Db";
 
     private static final Map<String, Map<String, String>> assocsByEntityName = new HashMap<>();
 
@@ -50,16 +70,13 @@ public class GenerateMendixJdbcProxies {
 
     public static void main(final String[] args) throws Exception {
 
-        // extracted(X.class);
-        // System.exit(0);
-
-        final File fBpeSources0 = new File("./src").getAbsoluteFile();
+        final File fBpeSources0 = new File(GENENTITIES_ROOT_DIR).getAbsoluteFile();
         final File fBpeSources = new File(fBpeSources0, GENENTITIES_PACKAGE.replace('.', '/'));
         if (!fBpeSources.isDirectory()) {
             throw new FileNotFoundException(fBpeSources.getPath());
         }
 
-        final File fBpClasses = new File("./DummyMendixApp/deployment/run/bin").getAbsoluteFile();
+        final File fBpClasses = new File(COMPILED_CLASSES_DIR).getAbsoluteFile();
         if (!fBpClasses.isDirectory()) {
             throw new FileNotFoundException(fBpClasses.getPath());
         }
@@ -554,7 +571,7 @@ public class GenerateMendixJdbcProxies {
     private static String[] convert2(final String[] split) {
         final String sMxModuleDir = split[0].toLowerCase();
         final String proxyClassSimpleName = split[1];
-        final String dbClassSimpleName = "Db" + proxyClassSimpleName;
+        final String dbClassSimpleName = CLASSNAME_PREFIX + proxyClassSimpleName;
         final String newPackage = GENENTITIES_PACKAGE + "." + sMxModuleDir;
         split[0] = newPackage;
         split[1] = dbClassSimpleName;

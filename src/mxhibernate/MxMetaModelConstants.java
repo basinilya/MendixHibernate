@@ -2,11 +2,10 @@ package mxhibernate;
 
 import java.util.Set;
 
-public class MxHibernateConstants {
-
-    private MxHibernateConstants() {
-        //
-    }
+/**
+ * Mendix MetaModel Constants
+ */
+public class MxMetaModelConstants {
 
     public static final String ID_COLUMN = "id";
 
@@ -44,4 +43,8 @@ public class MxHibernateConstants {
 
     // edition is child
     public static final String CHILD_COLUMN = "child_column";
+
+    private MxMetaModelConstants() {
+        //
+    }
 }

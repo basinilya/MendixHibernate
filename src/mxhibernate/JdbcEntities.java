@@ -12,14 +12,14 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * Reads Mendix entities info from the database
+ */
 public class JdbcEntities {
 
     private static final Logger LOGGER = LoggerFactory.getLogger("AAAMisc");
 
     private static JdbcEntities INSTANCE;
-
-    /** system attr present in all tables of a hierarchy */
-    public static final String ATTR_SUBMETAOBJECTNAME = "submetaobjectname";
 
     // known:
     // HSQL Database Engine
