@@ -5,6 +5,9 @@
 !/deployment/data/
 /deployment/data/*
 !/deployment/data/database/
+/deployment/data/database/*
+!/deployment/data/database/hsqldb/
+!/deployment/data/database/hsqldb/*/*.log
 /packages/
 /releases/
 /.mendix-cache/
