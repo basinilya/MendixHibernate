@@ -415,6 +415,7 @@ public class MendixHibernate {
             final String beanClassName =
                 GenerateMendixJdbcProxies.entityNameToNewClassName(entityName);
 
+            // TODO: mark VAs as cacheable
             final JaxbEntity entity = new JaxbEntity();
             entity.setName(entityName);
             entity.setClazz(beanClassName);
@@ -471,14 +472,6 @@ public class MendixHibernate {
                     }
                     // attributes like System.Workflow/ObjectId have no java property
                     continue;
-                }
-
-                if (MxMetaModelConstants.ATTR_DISCRIMINATOR.equals(mxAttributeName)
-                    || MxMetaModelConstants.SYSTEM_ATTRS.contains(mxAttributeName)
-                    || MxMetaModelConstants.ENTITY_FILEDOCUMENT.equals(entityName)
-                        && MxMetaModelConstants.FILEDOCUMENT_SYSTEM_ATTRS
-                            .contains(mxAttributeName)) {
-                    // continue;
                 }
 
                 final JaxbBasic attr = new JaxbBasic();
