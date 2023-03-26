@@ -25,24 +25,33 @@ public class DbLanguage
     }
 
 
+    private java.lang.String code;
+
     public java.lang.String getCode() {
-        return null;
+        return this.code;
     }
 
     public void setCode(java.lang.String val) {
+        this.code = val;
     }
 
+    private java.lang.String description;
+
     public java.lang.String getDescription() {
-        return null;
+        return this.description;
     }
 
     public void setDescription(java.lang.String val) {
+        this.description = val;
     }
 
+    private java.util.Set<mxhibernate.genentities.system.DbUser> user_Language;
+
     public java.util.Set<mxhibernate.genentities.system.DbUser> getUser_Language() {
-        return null;
+        return this.user_Language;
     }
 
     public void setUser_Language(java.util.Set<mxhibernate.genentities.system.DbUser> val) {
+        this.user_Language = val;
     }
 }

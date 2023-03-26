@@ -26,24 +26,33 @@ public class DbHttpHeader
     }
 
 
+    private java.lang.String key;
+
     public java.lang.String getKey() {
-        return null;
+        return this.key;
     }
 
     public void setKey(java.lang.String val) {
+        this.key = val;
     }
 
+    private java.lang.String value;
+
     public java.lang.String getValue() {
-        return null;
+        return this.value;
     }
 
     public void setValue(java.lang.String val) {
+        this.value = val;
     }
 
+    private java.util.Set<mxhibernate.genentities.system.DbHttpMessage> httpHeaders;
+
     public java.util.Set<mxhibernate.genentities.system.DbHttpMessage> getHttpHeaders() {
-        return null;
+        return this.httpHeaders;
     }
 
     public void setHttpHeaders(java.util.Set<mxhibernate.genentities.system.DbHttpMessage> val) {
+        this.httpHeaders = val;
     }
 }

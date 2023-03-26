@@ -38,31 +38,43 @@ public class DbAccount extends mxhibernate.genentities.system.DbUser
     }
 
 
+    private java.lang.String email;
+
     public java.lang.String getEmail() {
-        return null;
+        return this.email;
     }
 
     public void setEmail(java.lang.String val) {
+        this.email = val;
     }
 
+    private java.lang.String fullName;
+
     public java.lang.String getFullName() {
-        return null;
+        return this.fullName;
     }
 
     public void setFullName(java.lang.String val) {
+        this.fullName = val;
     }
 
+    private java.lang.Boolean isLocalUser;
+
     public java.lang.Boolean getIsLocalUser() {
-        return null;
+        return this.isLocalUser;
     }
 
     public void setIsLocalUser(java.lang.Boolean val) {
+        this.isLocalUser = val;
     }
 
+    private java.util.Set<mxhibernate.genentities.administration.DbAccountPasswordData> accountPasswordData_Account;
+
     public java.util.Set<mxhibernate.genentities.administration.DbAccountPasswordData> getAccountPasswordData_Account() {
-        return null;
+        return this.accountPasswordData_Account;
     }
 
     public void setAccountPasswordData_Account(java.util.Set<mxhibernate.genentities.administration.DbAccountPasswordData> val) {
+        this.accountPasswordData_Account = val;
     }
 }

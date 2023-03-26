@@ -31,38 +31,53 @@ public class DbSoapFault extends mxhibernate.genentities.system.DbError
     }
 
 
+    private java.lang.String code;
+
     public java.lang.String getCode() {
-        return null;
+        return this.code;
     }
 
     public void setCode(java.lang.String val) {
+        this.code = val;
     }
 
+    private java.lang.String detail;
+
     public java.lang.String getDetail() {
-        return null;
+        return this.detail;
     }
 
     public void setDetail(java.lang.String val) {
+        this.detail = val;
     }
 
+    private java.lang.String node;
+
     public java.lang.String getNode() {
-        return null;
+        return this.node;
     }
 
     public void setNode(java.lang.String val) {
+        this.node = val;
     }
 
+    private java.lang.String reason;
+
     public java.lang.String getReason() {
-        return null;
+        return this.reason;
     }
 
     public void setReason(java.lang.String val) {
+        this.reason = val;
     }
 
+    private java.lang.String role;
+
     public java.lang.String getRole() {
-        return null;
+        return this.role;
     }
 
     public void setRole(java.lang.String val) {
+        this.role = val;
     }
 }

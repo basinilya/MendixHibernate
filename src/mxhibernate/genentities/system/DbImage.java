@@ -30,10 +30,13 @@ public class DbImage extends mxhibernate.genentities.system.DbFileDocument
     }
 
 
+    private java.lang.String publicThumbnailPath;
+
     public java.lang.String getPublicThumbnailPath() {
-        return null;
+        return this.publicThumbnailPath;
     }
 
     public void setPublicThumbnailPath(java.lang.String val) {
+        this.publicThumbnailPath = val;
     }
 }

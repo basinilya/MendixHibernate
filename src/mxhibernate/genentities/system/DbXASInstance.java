@@ -28,45 +28,63 @@ public class DbXASInstance
     }
 
 
+    private java.lang.String XASId;
+
     public java.lang.String getXASId() {
-        return null;
+        return this.XASId;
     }
 
     public void setXASId(java.lang.String val) {
+        this.XASId = val;
     }
 
+    private java.lang.Integer allowedNumberOfConcurrentUsers;
+
     public java.lang.Integer getAllowedNumberOfConcurrentUsers() {
-        return null;
+        return this.allowedNumberOfConcurrentUsers;
     }
 
     public void setAllowedNumberOfConcurrentUsers(java.lang.Integer val) {
+        this.allowedNumberOfConcurrentUsers = val;
     }
 
+    private java.lang.String customerName;
+
     public java.lang.String getCustomerName() {
-        return null;
+        return this.customerName;
     }
 
     public void setCustomerName(java.lang.String val) {
+        this.customerName = val;
     }
 
+    private java.util.Date lastUpdate;
+
     public java.util.Date getLastUpdate() {
-        return null;
+        return this.lastUpdate;
     }
 
     public void setLastUpdate(java.util.Date val) {
+        this.lastUpdate = val;
     }
 
+    private java.lang.String partnerName;
+
     public java.lang.String getPartnerName() {
-        return null;
+        return this.partnerName;
     }
 
     public void setPartnerName(java.lang.String val) {
+        this.partnerName = val;
     }
 
+    private java.util.Set<mxhibernate.genentities.system.DbScheduledEventInformation> scheduledEventInformation_XASInstance;
+
     public java.util.Set<mxhibernate.genentities.system.DbScheduledEventInformation> getScheduledEventInformation_XASInstance() {
-        return null;
+        return this.scheduledEventInformation_XASInstance;
     }
 
     public void setScheduledEventInformation_XASInstance(java.util.Set<mxhibernate.genentities.system.DbScheduledEventInformation> val) {
+        this.scheduledEventInformation_XASInstance = val;
     }
 }

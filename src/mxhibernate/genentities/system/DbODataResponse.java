@@ -24,10 +24,13 @@ public class DbODataResponse
     }
 
 
+    private java.lang.Long count;
+
     public java.lang.Long getCount() {
-        return null;
+        return this.count;
     }
 
     public void setCount(java.lang.Long val) {
+        this.count = val;
     }
 }

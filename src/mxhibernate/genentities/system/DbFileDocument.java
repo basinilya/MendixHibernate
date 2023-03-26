@@ -29,38 +29,53 @@ public class DbFileDocument
     }
 
 
+    private java.lang.Boolean deleteAfterDownload;
+
     public java.lang.Boolean getDeleteAfterDownload() {
-        return null;
+        return this.deleteAfterDownload;
     }
 
     public void setDeleteAfterDownload(java.lang.Boolean val) {
+        this.deleteAfterDownload = val;
     }
 
+    private java.lang.Long fileID;
+
     public java.lang.Long getFileID() {
-        return null;
+        return this.fileID;
     }
 
     public void setFileID(java.lang.Long val) {
+        this.fileID = val;
     }
 
+    private java.lang.Boolean hasContents;
+
     public java.lang.Boolean getHasContents() {
-        return null;
+        return this.hasContents;
     }
 
     public void setHasContents(java.lang.Boolean val) {
+        this.hasContents = val;
     }
 
+    private java.lang.String name;
+
     public java.lang.String getName() {
-        return null;
+        return this.name;
     }
 
     public void setName(java.lang.String val) {
+        this.name = val;
     }
 
+    private java.lang.Long size;
+
     public java.lang.Long getSize() {
-        return null;
+        return this.size;
     }
 
     public void setSize(java.lang.Long val) {
+        this.size = val;
     }
 }

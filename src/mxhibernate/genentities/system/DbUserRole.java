@@ -27,45 +27,63 @@ public class DbUserRole
     }
 
 
+    private java.lang.String description;
+
     public java.lang.String getDescription() {
-        return null;
+        return this.description;
     }
 
     public void setDescription(java.lang.String val) {
+        this.description = val;
     }
 
+    private java.lang.String modelGUID;
+
     public java.lang.String getModelGUID() {
-        return null;
+        return this.modelGUID;
     }
 
     public void setModelGUID(java.lang.String val) {
+        this.modelGUID = val;
     }
 
+    private java.lang.String name;
+
     public java.lang.String getName() {
-        return null;
+        return this.name;
     }
 
     public void setName(java.lang.String val) {
+        this.name = val;
     }
 
+    private java.util.Set<mxhibernate.genentities.system.DbUser> userRoles;
+
     public java.util.Set<mxhibernate.genentities.system.DbUser> getUserRoles() {
-        return null;
+        return this.userRoles;
     }
 
     public void setUserRoles(java.util.Set<mxhibernate.genentities.system.DbUser> val) {
+        this.userRoles = val;
     }
 
+    private java.util.Set<mxhibernate.genentities.system.DbUserRole> grantableRoles;
+
     public java.util.Set<mxhibernate.genentities.system.DbUserRole> getGrantableRoles() {
-        return null;
+        return this.grantableRoles;
     }
 
     public void setGrantableRoles(java.util.Set<mxhibernate.genentities.system.DbUserRole> val) {
+        this.grantableRoles = val;
     }
 
+    private java.util.Set<mxhibernate.genentities.system.DbUserRole> grantableRoles_reverse;
+
     public java.util.Set<mxhibernate.genentities.system.DbUserRole> getGrantableRoles_reverse() {
-        return null;
+        return this.grantableRoles_reverse;
     }
 
     public void setGrantableRoles_reverse(java.util.Set<mxhibernate.genentities.system.DbUserRole> val) {
+        this.grantableRoles_reverse = val;
     }
 }

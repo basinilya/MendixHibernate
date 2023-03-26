@@ -27,38 +27,53 @@ public class DbWorkflowCurrentActivity
     }
 
 
+    private java.lang.String action;
+
     public java.lang.String getAction() {
-        return null;
+        return this.action;
     }
 
     public void setAction(java.lang.String val) {
+        this.action = val;
     }
 
+    private java.util.Set<mxhibernate.genentities.system.DbWorkflowActivityDetails> workflowCurrentActivity_JumpToTarget;
+
     public java.util.Set<mxhibernate.genentities.system.DbWorkflowActivityDetails> getWorkflowCurrentActivity_JumpToTarget() {
-        return null;
+        return this.workflowCurrentActivity_JumpToTarget;
     }
 
     public void setWorkflowCurrentActivity_JumpToTarget(java.util.Set<mxhibernate.genentities.system.DbWorkflowActivityDetails> val) {
+        this.workflowCurrentActivity_JumpToTarget = val;
     }
 
+    private java.util.Set<mxhibernate.genentities.system.DbWorkflowActivityDetails> workflowCurrentActivity_ActivityDetails;
+
     public java.util.Set<mxhibernate.genentities.system.DbWorkflowActivityDetails> getWorkflowCurrentActivity_ActivityDetails() {
-        return null;
+        return this.workflowCurrentActivity_ActivityDetails;
     }
 
     public void setWorkflowCurrentActivity_ActivityDetails(java.util.Set<mxhibernate.genentities.system.DbWorkflowActivityDetails> val) {
+        this.workflowCurrentActivity_ActivityDetails = val;
     }
 
+    private java.util.Set<mxhibernate.genentities.system.DbWorkflowJumpToDetails> workflowJumpToDetails_CurrentActivities;
+
     public java.util.Set<mxhibernate.genentities.system.DbWorkflowJumpToDetails> getWorkflowJumpToDetails_CurrentActivities() {
-        return null;
+        return this.workflowJumpToDetails_CurrentActivities;
     }
 
     public void setWorkflowJumpToDetails_CurrentActivities(java.util.Set<mxhibernate.genentities.system.DbWorkflowJumpToDetails> val) {
+        this.workflowJumpToDetails_CurrentActivities = val;
     }
 
+    private java.util.Set<mxhibernate.genentities.system.DbWorkflowActivityDetails> workflowCurrentActivity_ApplicableTargets;
+
     public java.util.Set<mxhibernate.genentities.system.DbWorkflowActivityDetails> getWorkflowCurrentActivity_ApplicableTargets() {
-        return null;
+        return this.workflowCurrentActivity_ApplicableTargets;
     }
 
     public void setWorkflowCurrentActivity_ApplicableTargets(java.util.Set<mxhibernate.genentities.system.DbWorkflowActivityDetails> val) {
+        this.workflowCurrentActivity_ApplicableTargets = val;
     }
 }

@@ -26,24 +26,33 @@ public class DbError
     }
 
 
+    private java.lang.String errorType;
+
     public java.lang.String getErrorType() {
-        return null;
+        return this.errorType;
     }
 
     public void setErrorType(java.lang.String val) {
+        this.errorType = val;
     }
 
+    private java.lang.String message;
+
     public java.lang.String getMessage() {
-        return null;
+        return this.message;
     }
 
     public void setMessage(java.lang.String val) {
+        this.message = val;
     }
 
+    private java.lang.String stacktrace;
+
     public java.lang.String getStacktrace() {
-        return null;
+        return this.stacktrace;
     }
 
     public void setStacktrace(java.lang.String val) {
+        this.stacktrace = val;
     }
 }

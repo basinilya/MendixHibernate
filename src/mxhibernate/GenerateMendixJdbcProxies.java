@@ -302,7 +302,7 @@ public class GenerateMendixJdbcProxies {
                     + "        public java.lang.String toString()\n" //
                     + "        {\n" + "            return metaName;\n" //
                     + "        }\n" //
-                    + "    }\n" //
+                    + "    }" //
             );
 
         final Map<String, Enum<?>> mxMembersByBeanProp =
@@ -364,13 +364,13 @@ public class GenerateMendixJdbcProxies {
             }
 
             // no enums
-            final String newPropClassName = propIsProxy ? "java.lang.String" : propClassName;
+            final String newPropTypeName = propIsProxy ? "java.lang.String" : propClassName;
 
             final String baseName = StringUtils.capitalize(propName);
             final String getterName = "get" + baseName;
             final String setterName = "set" + baseName;
 
-            appendPropMethods(sb, newPropClassName, getterName, setterName);
+            appendPropMethods(sb, newPropTypeName, getterName, setterName, propName);
 
         }
 
@@ -381,38 +381,55 @@ public class GenerateMendixJdbcProxies {
 
             final String[] a = convert2(StringUtils.split(otherEntity, '.'));
             final String otherClassName = a[0] + '.' + a[1];
-            final String newPropClassName = "java.util.Set<" + otherClassName + ">";
+            final String newPropTypeName = "java.util.Set<" + otherClassName + ">";
 
             final String baseName = StringUtils.capitalize(propName);
             final String getterName = "get" + baseName;
             final String setterName = "set" + baseName;
 
-            appendPropMethods(sb, newPropClassName, getterName, setterName);
+            appendPropMethods(sb, newPropTypeName, getterName, setterName, propName);
 
             if (otherEntity.equals(entityName)) {
-                appendPropMethods(sb, newPropClassName, getterName + "_reverse", setterName + "_reverse");
+                appendPropMethods(
+                    sb,
+                    newPropTypeName,
+                    getterName + "_reverse",
+                    setterName + "_reverse",
+                    propName + "_reverse");
             }
 
         }
-
 
     }
 
     private static void appendPropMethods(
             final StringBuilder sb,
-            final String newPropClassName,
+            final String propTypeName,
             final String getterName,
-            final String setterName) {
+            final String setterName,
+            final String propName) {
+        sb
+            .append(
+                "\n"//
+                    + "\n" + "    private ")
+            .append(propTypeName)
+            .append(" ")
+            .append(propName)
+            .append(";");
+
         sb
             .append(
                 "\n"//
                     + "\n" + "    public ")
-            .append(newPropClassName)
+            .append(propTypeName)
             .append(" ")
             .append(getterName)
             .append(
                 "() {" //
-                    + "\n" + "        return null;" //
+                    + "\n" + "        return this.")
+            .append(propName)
+            .append(
+                ";" //
                     + "\n" + "    }");
 
         sb
@@ -421,9 +438,13 @@ public class GenerateMendixJdbcProxies {
                     + "\n" + "    public void ")
             .append(setterName)
             .append("(")
-            .append(newPropClassName)
+            .append(propTypeName)
             .append(
                 " val) {" //
+                    + "\n" + "        this.")
+            .append(propName)
+            .append(
+                " = val;" //
                     + "\n" + "    }");
     }
 

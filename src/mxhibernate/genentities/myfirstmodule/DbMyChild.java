@@ -25,17 +25,23 @@ public class DbMyChild
     }
 
 
+    private java.lang.String attribute;
+
     public java.lang.String getAttribute() {
-        return null;
+        return this.attribute;
     }
 
     public void setAttribute(java.lang.String val) {
+        this.attribute = val;
     }
 
+    private java.util.Set<mxhibernate.genentities.myfirstmodule.DbMyParent> myParent_MyChild;
+
     public java.util.Set<mxhibernate.genentities.myfirstmodule.DbMyParent> getMyParent_MyChild() {
-        return null;
+        return this.myParent_MyChild;
     }
 
     public void setMyParent_MyChild(java.util.Set<mxhibernate.genentities.myfirstmodule.DbMyParent> val) {
+        this.myParent_MyChild = val;
     }
 }

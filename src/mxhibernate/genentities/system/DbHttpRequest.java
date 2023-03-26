@@ -26,10 +26,13 @@ public class DbHttpRequest extends mxhibernate.genentities.system.DbHttpMessage
     }
 
 
+    private java.lang.String uri;
+
     public java.lang.String getUri() {
-        return null;
+        return this.uri;
     }
 
     public void setUri(java.lang.String val) {
+        this.uri = val;
     }
 }

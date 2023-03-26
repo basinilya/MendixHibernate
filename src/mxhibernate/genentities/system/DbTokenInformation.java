@@ -27,31 +27,43 @@ public class DbTokenInformation
     }
 
 
+    private java.util.Date expiryDate;
+
     public java.util.Date getExpiryDate() {
-        return null;
+        return this.expiryDate;
     }
 
     public void setExpiryDate(java.util.Date val) {
+        this.expiryDate = val;
     }
 
+    private java.lang.String token;
+
     public java.lang.String getToken() {
-        return null;
+        return this.token;
     }
 
     public void setToken(java.lang.String val) {
+        this.token = val;
     }
 
+    private java.lang.String userAgent;
+
     public java.lang.String getUserAgent() {
-        return null;
+        return this.userAgent;
     }
 
     public void setUserAgent(java.lang.String val) {
+        this.userAgent = val;
     }
 
+    private java.util.Set<mxhibernate.genentities.system.DbUser> tokenInformation_User;
+
     public java.util.Set<mxhibernate.genentities.system.DbUser> getTokenInformation_User() {
-        return null;
+        return this.tokenInformation_User;
     }
 
     public void setTokenInformation_User(java.util.Set<mxhibernate.genentities.system.DbUser> val) {
+        this.tokenInformation_User = val;
     }
 }

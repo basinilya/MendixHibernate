@@ -40,122 +40,173 @@ public class DbQueuedTask
     }
 
 
+    private java.lang.String XASId;
+
     public java.lang.String getXASId() {
-        return null;
+        return this.XASId;
     }
 
     public void setXASId(java.lang.String val) {
+        this.XASId = val;
     }
 
+    private java.lang.String arguments;
+
     public java.lang.String getArguments() {
-        return null;
+        return this.arguments;
     }
 
     public void setArguments(java.lang.String val) {
+        this.arguments = val;
     }
 
+    private java.lang.String contextData;
+
     public java.lang.String getContextData() {
-        return null;
+        return this.contextData;
     }
 
     public void setContextData(java.lang.String val) {
+        this.contextData = val;
     }
 
+    private java.lang.String contextType;
+
     public java.lang.String getContextType() {
-        return null;
+        return this.contextType;
     }
 
     public void setContextType(java.lang.String val) {
+        this.contextType = val;
     }
 
+    private java.util.Date created;
+
     public java.util.Date getCreated() {
-        return null;
+        return this.created;
     }
 
     public void setCreated(java.util.Date val) {
+        this.created = val;
     }
 
+    private java.lang.String microflowName;
+
     public java.lang.String getMicroflowName() {
-        return null;
+        return this.microflowName;
     }
 
     public void setMicroflowName(java.lang.String val) {
+        this.microflowName = val;
     }
 
+    private java.lang.String queueId;
+
     public java.lang.String getQueueId() {
-        return null;
+        return this.queueId;
     }
 
     public void setQueueId(java.lang.String val) {
+        this.queueId = val;
     }
 
+    private java.lang.String queueName;
+
     public java.lang.String getQueueName() {
-        return null;
+        return this.queueName;
     }
 
     public void setQueueName(java.lang.String val) {
+        this.queueName = val;
     }
 
+    private java.lang.Long retried;
+
     public java.lang.Long getRetried() {
-        return null;
+        return this.retried;
     }
 
     public void setRetried(java.lang.Long val) {
+        this.retried = val;
     }
 
+    private java.lang.String retry;
+
     public java.lang.String getRetry() {
-        return null;
+        return this.retry;
     }
 
     public void setRetry(java.lang.String val) {
+        this.retry = val;
     }
 
+    private java.lang.String scheduledEventName;
+
     public java.lang.String getScheduledEventName() {
-        return null;
+        return this.scheduledEventName;
     }
 
     public void setScheduledEventName(java.lang.String val) {
+        this.scheduledEventName = val;
     }
 
+    private java.lang.Long sequence;
+
     public java.lang.Long getSequence() {
-        return null;
+        return this.sequence;
     }
 
     public void setSequence(java.lang.Long val) {
+        this.sequence = val;
     }
 
+    private java.util.Date startAt;
+
     public java.util.Date getStartAt() {
-        return null;
+        return this.startAt;
     }
 
     public void setStartAt(java.util.Date val) {
+        this.startAt = val;
     }
 
+    private java.util.Date started;
+
     public java.util.Date getStarted() {
-        return null;
+        return this.started;
     }
 
     public void setStarted(java.util.Date val) {
+        this.started = val;
     }
 
+    private java.lang.String status;
+
     public java.lang.String getStatus() {
-        return null;
+        return this.status;
     }
 
     public void setStatus(java.lang.String val) {
+        this.status = val;
     }
 
+    private java.lang.Long threadId;
+
     public java.lang.Long getThreadId() {
-        return null;
+        return this.threadId;
     }
 
     public void setThreadId(java.lang.Long val) {
+        this.threadId = val;
     }
 
+    private java.lang.String userActionName;
+
     public java.lang.String getUserActionName() {
-        return null;
+        return this.userActionName;
     }
 
     public void setUserActionName(java.lang.String val) {
+        this.userActionName = val;
     }
 }

@@ -28,38 +28,53 @@ public class DbPaging
     }
 
 
+    private java.lang.Boolean hasMoreData;
+
     public java.lang.Boolean getHasMoreData() {
-        return null;
+        return this.hasMoreData;
     }
 
     public void setHasMoreData(java.lang.Boolean val) {
+        this.hasMoreData = val;
     }
 
+    private java.lang.Boolean isSortable;
+
     public java.lang.Boolean getIsSortable() {
-        return null;
+        return this.isSortable;
     }
 
     public void setIsSortable(java.lang.Boolean val) {
+        this.isSortable = val;
     }
 
+    private java.lang.Long pageNumber;
+
     public java.lang.Long getPageNumber() {
-        return null;
+        return this.pageNumber;
     }
 
     public void setPageNumber(java.lang.Long val) {
+        this.pageNumber = val;
     }
 
+    private java.lang.Boolean sortAscending;
+
     public java.lang.Boolean getSortAscending() {
-        return null;
+        return this.sortAscending;
     }
 
     public void setSortAscending(java.lang.Boolean val) {
+        this.sortAscending = val;
     }
 
+    private java.lang.String sortAttribute;
+
     public java.lang.String getSortAttribute() {
-        return null;
+        return this.sortAttribute;
     }
 
     public void setSortAttribute(java.lang.String val) {
+        this.sortAttribute = val;
     }
 }

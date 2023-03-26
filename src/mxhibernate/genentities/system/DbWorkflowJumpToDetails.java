@@ -26,24 +26,33 @@ public class DbWorkflowJumpToDetails
     }
 
 
+    private java.lang.String error;
+
     public java.lang.String getError() {
-        return null;
+        return this.error;
     }
 
     public void setError(java.lang.String val) {
+        this.error = val;
     }
 
+    private java.util.Set<mxhibernate.genentities.system.DbWorkflow> workflowJumpToDetails_Workflow;
+
     public java.util.Set<mxhibernate.genentities.system.DbWorkflow> getWorkflowJumpToDetails_Workflow() {
-        return null;
+        return this.workflowJumpToDetails_Workflow;
     }
 
     public void setWorkflowJumpToDetails_Workflow(java.util.Set<mxhibernate.genentities.system.DbWorkflow> val) {
+        this.workflowJumpToDetails_Workflow = val;
     }
 
+    private java.util.Set<mxhibernate.genentities.system.DbWorkflowCurrentActivity> workflowJumpToDetails_CurrentActivities;
+
     public java.util.Set<mxhibernate.genentities.system.DbWorkflowCurrentActivity> getWorkflowJumpToDetails_CurrentActivities() {
-        return null;
+        return this.workflowJumpToDetails_CurrentActivities;
     }
 
     public void setWorkflowJumpToDetails_CurrentActivities(java.util.Set<mxhibernate.genentities.system.DbWorkflowCurrentActivity> val) {
+        this.workflowJumpToDetails_CurrentActivities = val;
     }
 }

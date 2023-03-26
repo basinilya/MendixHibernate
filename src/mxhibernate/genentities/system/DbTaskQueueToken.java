@@ -26,24 +26,33 @@ public class DbTaskQueueToken
     }
 
 
+    private java.lang.String XASId;
+
     public java.lang.String getXASId() {
-        return null;
+        return this.XASId;
     }
 
     public void setXASId(java.lang.String val) {
+        this.XASId = val;
     }
 
+    private java.lang.String queueName;
+
     public java.lang.String getQueueName() {
-        return null;
+        return this.queueName;
     }
 
     public void setQueueName(java.lang.String val) {
+        this.queueName = val;
     }
 
+    private java.util.Date validUntil;
+
     public java.util.Date getValidUntil() {
-        return null;
+        return this.validUntil;
     }
 
     public void setValidUntil(java.util.Date val) {
+        this.validUntil = val;
     }
 }

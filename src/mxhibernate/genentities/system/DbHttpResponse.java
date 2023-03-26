@@ -27,17 +27,23 @@ public class DbHttpResponse extends mxhibernate.genentities.system.DbHttpMessage
     }
 
 
+    private java.lang.String reasonPhrase;
+
     public java.lang.String getReasonPhrase() {
-        return null;
+        return this.reasonPhrase;
     }
 
     public void setReasonPhrase(java.lang.String val) {
+        this.reasonPhrase = val;
     }
 
+    private java.lang.Integer statusCode;
+
     public java.lang.Integer getStatusCode() {
-        return null;
+        return this.statusCode;
     }
 
     public void setStatusCode(java.lang.Integer val) {
+        this.statusCode = val;
     }
 }

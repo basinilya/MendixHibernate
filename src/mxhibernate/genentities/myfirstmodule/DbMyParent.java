@@ -27,45 +27,63 @@ public class DbMyParent
     }
 
 
+    private java.lang.String attribute;
+
     public java.lang.String getAttribute() {
-        return null;
+        return this.attribute;
     }
 
     public void setAttribute(java.lang.String val) {
+        this.attribute = val;
     }
 
+    private java.util.Set<mxhibernate.genentities.myfirstmodule.DbMyChild> myParent_MyChild;
+
     public java.util.Set<mxhibernate.genentities.myfirstmodule.DbMyChild> getMyParent_MyChild() {
-        return null;
+        return this.myParent_MyChild;
     }
 
     public void setMyParent_MyChild(java.util.Set<mxhibernate.genentities.myfirstmodule.DbMyChild> val) {
+        this.myParent_MyChild = val;
     }
 
+    private java.util.Set<mxhibernate.genentities.myfirstmodule.DbMyParent> many_Many;
+
     public java.util.Set<mxhibernate.genentities.myfirstmodule.DbMyParent> getMany_Many() {
-        return null;
+        return this.many_Many;
     }
 
     public void setMany_Many(java.util.Set<mxhibernate.genentities.myfirstmodule.DbMyParent> val) {
+        this.many_Many = val;
     }
 
+    private java.util.Set<mxhibernate.genentities.myfirstmodule.DbMyParent> many_Many_reverse;
+
     public java.util.Set<mxhibernate.genentities.myfirstmodule.DbMyParent> getMany_Many_reverse() {
-        return null;
+        return this.many_Many_reverse;
     }
 
     public void setMany_Many_reverse(java.util.Set<mxhibernate.genentities.myfirstmodule.DbMyParent> val) {
+        this.many_Many_reverse = val;
     }
 
+    private java.util.Set<mxhibernate.genentities.myfirstmodule.DbMyParent> one_One;
+
     public java.util.Set<mxhibernate.genentities.myfirstmodule.DbMyParent> getOne_One() {
-        return null;
+        return this.one_One;
     }
 
     public void setOne_One(java.util.Set<mxhibernate.genentities.myfirstmodule.DbMyParent> val) {
+        this.one_One = val;
     }
 
+    private java.util.Set<mxhibernate.genentities.myfirstmodule.DbMyParent> one_One_reverse;
+
     public java.util.Set<mxhibernate.genentities.myfirstmodule.DbMyParent> getOne_One_reverse() {
-        return null;
+        return this.one_One_reverse;
     }
 
     public void setOne_One_reverse(java.util.Set<mxhibernate.genentities.myfirstmodule.DbMyParent> val) {
+        this.one_One_reverse = val;
     }
 }
