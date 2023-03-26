@@ -75,9 +75,9 @@ import jakarta.xml.bind.PropertyException;
 import mxhibernate.JdbcEntities.Association;
 import mxhibernate.JdbcEntities.Attribute;
 import mxhibernate.JdbcEntities.Entity;
-import mxhibernate.entities.DbAccount;
-import mxhibernate.entities.DbUser;
-import mxhibernate.entities.DbUserRole;
+import mxhibernate.genentities.administration.DbAccount;
+import mxhibernate.genentities.system.DbUser;
+import mxhibernate.genentities.system.DbUserRole;
 
 public class MendixHibernate {
 
@@ -252,7 +252,7 @@ public class MendixHibernate {
         System.out
             .println(
                 "    users: " + obj
-                    .getUsers()
+                    .getUserRoles()
                     .stream()
                     .map(DbUser::getName)
                     .collect(Collectors.joining(",")));
