@@ -1,4 +1,4 @@
-package mxhibernate;
+package mxhibernate.util;
 
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;

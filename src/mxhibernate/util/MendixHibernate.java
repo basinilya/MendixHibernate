@@ -1,4 +1,4 @@
-package mxhibernate;
+package mxhibernate.util;
 
 import java.beans.BeanInfo;
 import java.beans.Introspector;
@@ -72,12 +72,12 @@ import jakarta.xml.bind.JAXBContext;
 import jakarta.xml.bind.JAXBException;
 import jakarta.xml.bind.Marshaller;
 import jakarta.xml.bind.PropertyException;
-import mxhibernate.JdbcEntities.Association;
-import mxhibernate.JdbcEntities.Attribute;
-import mxhibernate.JdbcEntities.Entity;
 import mxhibernate.genentities.administration.DbAccount;
 import mxhibernate.genentities.system.DbUser;
 import mxhibernate.genentities.system.DbUserRole;
+import mxhibernate.util.JdbcEntities.Association;
+import mxhibernate.util.JdbcEntities.Attribute;
+import mxhibernate.util.JdbcEntities.Entity;
 
 /**
  * Generate Hibernate mapping XML out of Mendix database and POJOs generated with

@@ -1,4 +1,4 @@
-package mxhibernate;
+package mxhibernate.util;
 
 import java.beans.IntrospectionException;
 import java.io.File;
@@ -29,7 +29,7 @@ import org.apache.commons.text.StringEscapeUtils;
 
 import com.zaxxer.hikari.HikariDataSource;
 
-import mxhibernate.JdbcEntities.Entity;
+import mxhibernate.util.JdbcEntities.Entity;
 
 /**
  * TODO: this is supposed to supplement GenerateMendixJdbcProxies with the hidden system entities
