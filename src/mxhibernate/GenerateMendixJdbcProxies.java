@@ -62,13 +62,20 @@ public class GenerateMendixJdbcProxies {
 
     private static final String CLASSNAME_PREFIX = "Db";
 
-    private static final Map<String, Map<String, String>> assocsByEntityName = new HashMap<>();
+    private final Map<String, Map<String, String>> assocsByEntityName = new HashMap<>();
+
+    private final StringBuilder sb = new StringBuilder();
 
     private GenerateMendixJdbcProxies() {
         //
     }
 
     public static void main(final String[] args) throws Exception {
+        final GenerateMendixJdbcProxies instance = new GenerateMendixJdbcProxies();
+        instance.doIt();
+    }
+
+    private void doIt() throws Exception {
 
         final File fBpeSources0 = new File(GENENTITIES_ROOT_DIR).getAbsoluteFile();
         final File fBpeSources = new File(fBpeSources0, GENENTITIES_PACKAGE.replace('.', '/'));
@@ -98,7 +105,7 @@ public class GenerateMendixJdbcProxies {
         System.out.println("done");
     }
 
-    private static void collectAssociations(
+    private void collectAssociations(
             final URLClassLoader urlClassLoader,
             final String proxyClassName)
                                          throws ClassNotFoundException,
@@ -192,11 +199,11 @@ public class GenerateMendixJdbcProxies {
         }
     }
 
-    private static Map<String, String> getAssocs(final String entityName) {
+    private Map<String, String> getAssocs(final String entityName) {
         return assocsByEntityName.computeIfAbsent(entityName, unused -> new HashMap<>());
     }
 
-    private static void generateJavaFile(
+    private void generateJavaFile(
             final File fBpeSources0,
             final URLClassLoader urlClassLoader,
             final String proxyClassName)
@@ -210,31 +217,23 @@ public class GenerateMendixJdbcProxies {
         final Class<?> proxySuperClass = proxyClass.getSuperclass();
         final String proxySuperClassName = proxySuperClass.getName();
 
-        final StringBuilder sb = new StringBuilder();
+        sb.setLength(0);
 
         final String[] split = convertProxyClassName(proxyClassName);
 
         final String newPackage = split[0];
         final String dbClassSimpleName = split[1];
 
-        sb
-            .append("/* generated with: ")
-            .append(GenerateMendixJdbcProxies.class.getName())
-            .append(" */");
-        sb.append("\n").append("package ").append(newPackage).append(";");
-        sb.append("\n");
+        this.a("/* generated with: ").a(GenerateMendixJdbcProxies.class.getName()).a(" */");
+        this.a("\n").a("package ").a(newPackage).a(";");
+        this.a("\n");
         final boolean isEnum = proxyClass.isEnum();
-        sb
-            .append("\n")
-            .append("public ")
-            .append(isEnum ? "enum" : "class")
-            .append(" ")
-            .append(dbClassSimpleName);
+        this.a("\n").a("public ").a(isEnum ? "enum" : "class").a(" ").a(dbClassSimpleName);
 
         if (proxyClass.isEnum()) {
-            sb.append("\n").append("{");
+            this.a("\n").a("{");
 
-            appendEnumClassBody(sb, proxyClass, dbClassSimpleName);
+            appendEnumClassBody(proxyClass, dbClassSimpleName);
 
         } else {
 
@@ -243,17 +242,17 @@ public class GenerateMendixJdbcProxies {
                 final String[] split2 = convertProxyClassName(proxySuperClassName);
                 final String newPackage2 = split2[0];
                 final String dbClassSimpleName2 = split2[1];
-                sb.append(" extends ").append(newPackage2).append(".").append(dbClassSimpleName2);
+                this.a(" extends ").a(newPackage2).a(".").a(dbClassSimpleName2);
             }
 
-            sb.append("\n").append("{");
+            this.a("\n").a("{");
 
-            appendClassBody(sb, urlClassLoader, proxyClassName, proxyClass, isRootEntity);
+            appendClassBody(urlClassLoader, proxyClassName, proxyClass, isRootEntity);
 
         }
 
-        sb.append("\n").append("}");
-        sb.append("\n");
+        this.a("\n").a("}");
+        this.a("\n");
 
         final File fNewPackage = new File(fBpeSources0, newPackage.replace('.', '/'));
         Files.createDirectories(fNewPackage.toPath());
@@ -267,8 +266,7 @@ public class GenerateMendixJdbcProxies {
         }
     }
 
-    private static void appendClassBody(
-            final StringBuilder sb,
+    private void appendClassBody(
             final URLClassLoader urlClassLoader,
             final String proxyClassName,
             final Class<?> proxyClass,
@@ -280,39 +278,33 @@ public class GenerateMendixJdbcProxies {
         final String entityName = (String) fEntityName.get(null);
         final String escEntity = StringEscapeUtils.escapeJava(entityName);
 
-        sb
-            .append("\n")
-            .append("    public static final java.lang.String entityName = \"")
-            .append(escEntity)
-            .append("\";");
+        this
+            .a("\n")
+            .a("    public static final java.lang.String entityName = \"")
+            .a(escEntity)
+            .a("\";");
 
         final Class<Enum<?>> memberNamesClass = getMemberNamesClass(urlClassLoader, proxyClassName);
         if (memberNamesClass == null) {
             return;
         }
 
-        sb.append("\n");
-        sb.append("\n").append("    public enum MemberNames");
-        sb.append("\n").append("    {");
+        this.a("\n");
+        this.a("\n").a("    public enum MemberNames");
+        this.a("\n").a("    {");
         final Enum<?>[] enums = memberNamesClass.getEnumConstants();
         String esep = "\n";
         for (final Enum<?> enu : enums) {
             final String name = enu.name();
             final String value = enu.toString();
             final String escVal = StringEscapeUtils.escapeJava(value);
-            sb
-                .append(esep)
-                .append("        ")
-                .append(name)
-                .append("(\"")
-                .append(escVal)
-                .append("\")");
+            this.a(esep).a("        ").a(name).a("(\"").a(escVal).a("\")");
             esep = ",\n";
         }
-        sb.append(";");
-        sb.append("\n");
-        sb
-            .append(
+        this.a(";");
+        this.a("\n");
+        this
+            .a(
                 "\n" //
                     + "        private final java.lang.String metaName;\n" //
                     + "\n" + "        MemberNames(java.lang.String s)\n" //
@@ -327,7 +319,7 @@ public class GenerateMendixJdbcProxies {
             );
 
         if (isRootEntity) {
-            appendPropMethods(sb, "long", "getId", "setId", "id");
+            appendPropMethods("long", "getId", "setId", "id");
         }
 
         final Map<String, Enum<?>> mxMembersByBeanProp =
@@ -391,7 +383,7 @@ public class GenerateMendixJdbcProxies {
             final String getterName = "get" + baseName;
             final String setterName = "set" + baseName;
 
-            appendPropMethods(sb, newPropTypeName, getterName, setterName, propName);
+            appendPropMethods(newPropTypeName, getterName, setterName, propName);
 
         }
 
@@ -407,11 +399,10 @@ public class GenerateMendixJdbcProxies {
             final String getterName = "get" + baseName;
             final String setterName = "set" + baseName;
 
-            appendPropMethods(sb, newPropTypeName, getterName, setterName, propName);
+            appendPropMethods(newPropTypeName, getterName, setterName, propName);
 
             if (otherEntity.equals(entityName)) {
                 appendPropMethods(
-                    sb,
                     newPropTypeName,
                     getterName + SUFFIX_REVERSE,
                     setterName + SUFFIX_REVERSE,
@@ -431,56 +422,54 @@ public class GenerateMendixJdbcProxies {
         return a[0] + '.' + a[1];
     }
 
-    private static void appendPropMethods(
-            final StringBuilder sb,
+    private void appendPropMethods(
             final String propTypeName,
             final String getterName,
             final String setterName,
             final String javaPropName) {
-        sb
-            .append(
+        this
+            .a(
                 "\n"//
                     + "\n" + "    private ")
-            .append(propTypeName)
-            .append(" ")
-            .append(javaPropName)
-            .append(";");
+            .a(propTypeName)
+            .a(" ")
+            .a(javaPropName)
+            .a(";");
 
-        sb
-            .append(
+        this
+            .a(
                 "\n"//
                     + "\n" + "    public ")
-            .append(propTypeName)
-            .append(" ")
-            .append(getterName)
-            .append(
+            .a(propTypeName)
+            .a(" ")
+            .a(getterName)
+            .a(
                 "() {" //
                     + "\n" + "        return this.")
-            .append(javaPropName)
-            .append(
+            .a(javaPropName)
+            .a(
                 ";" //
                     + "\n" + "    }");
 
-        sb
-            .append(
+        this
+            .a(
                 "\n"//
                     + "\n" + "    public void ")
-            .append(setterName)
-            .append("(")
-            .append(propTypeName)
-            .append(
+            .a(setterName)
+            .a("(")
+            .a(propTypeName)
+            .a(
                 " val) {" //
                     + "\n" + "        this.")
-            .append(javaPropName)
-            .append(
+            .a(javaPropName)
+            .a(
                 " = val;" //
                     + "\n" + "    }");
     }
 
-    private static void appendEnumClassBody(
-            final StringBuilder sb,
-            final Class<?> proxyClass,
-            final String dbClassSimpleName) throws NoSuchFieldException, IllegalAccessException {
+    private void appendEnumClassBody(final Class<?> proxyClass, final String dbClassSimpleName)
+                                                                                                throws NoSuchFieldException,
+                                                                                                    IllegalAccessException {
         final Enum<?>[] enums = (Enum<?>[]) proxyClass.getEnumConstants();
         final Field fCaptions = proxyClass.getDeclaredField("captions");
         fCaptions.setAccessible(true);
@@ -492,35 +481,35 @@ public class GenerateMendixJdbcProxies {
             @SuppressWarnings("unchecked")
             final Map<String, String> captions = (Map<String, String>) fCaptions.get(enu);
 
-            sb.append(esep).append("    ").append(name).append("(new java.lang.String[][] { ");
+            this.a(esep).a("    ").a(name).a("(new java.lang.String[][] { ");
             esep = ",\n";
 
             String sep = "";
             for (final Entry<String, String> pair : captions.entrySet()) {
                 final String escKey = StringEscapeUtils.escapeJava(pair.getKey());
                 final String escVal = StringEscapeUtils.escapeJava(pair.getValue());
-                sb
-                    .append(sep)
-                    .append("new java.lang.String[] { \"")
-                    .append(escKey)
-                    .append("\", \"")
-                    .append(escVal)
-                    .append("\" }");
+                this
+                    .a(sep)
+                    .a("new java.lang.String[] { \"")
+                    .a(escKey)
+                    .a("\", \"")
+                    .a(escVal)
+                    .a("\" }");
                 sep = ", ";
             }
-            sb.append(" })");
+            this.a(" })");
         }
-        sb.append(";");
+        this.a(";");
 
-        sb.append("\n");
-        sb
-            .append(
+        this.a("\n");
+        this
+            .a(
                 "\n" //
                     + "    private final java.util.Map<java.lang.String, java.lang.String> captions;\n"
                     + "\n" //
                     + "    private ")
-            .append(dbClassSimpleName)
-            .append(
+            .a(dbClassSimpleName)
+            .a(
                 "(java.lang.String[][] captionStrings)\n"//
                     + "    {\n" //
                     + "        this.captions = new java.util.HashMap<>();\n"
@@ -594,6 +583,11 @@ public class GenerateMendixJdbcProxies {
             }
         }
         return res;
+    }
+
+    private GenerateMendixJdbcProxies a(final Object o) {
+        sb.append(o);
+        return this;
     }
 
     private static final class MyDeletingVisitor extends SimpleFileVisitor<Path> {
