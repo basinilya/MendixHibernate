@@ -25,9 +25,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -49,6 +51,8 @@ import org.apache.commons.text.StringEscapeUtils;
  */
 public class GenerateMendixJdbcProxies {
 
+    private static final String FNAME_ENTITY_NAME = "entityName";
+
     /** Java sources root for the generated sources */
     private static final String GENENTITIES_ROOT_DIR = "./src";
 
@@ -65,6 +69,8 @@ public class GenerateMendixJdbcProxies {
     private final Map<String, Map<String, String>> assocsByEntityName = new HashMap<>();
 
     private final StringBuilder sb = new StringBuilder();
+
+    private Set<String> genFieldNames;
 
     private GenerateMendixJdbcProxies() {
         //
@@ -219,6 +225,9 @@ public class GenerateMendixJdbcProxies {
 
         sb.setLength(0);
 
+        genFieldNames = new HashSet<>();
+        genFieldNames.add(FNAME_ENTITY_NAME);
+
         final String[] split = convertProxyClassName(proxyClassName);
 
         final String newPackage = split[0];
@@ -274,8 +283,7 @@ public class GenerateMendixJdbcProxies {
                                         throws NoSuchFieldException,
                                             IllegalAccessException,
                                             IntrospectionException {
-        final Field fEntityName = proxyClass.getDeclaredField("entityName");
-        final String entityName = (String) fEntityName.get(null);
+        final String entityName = getEntityName(proxyClass);
         final String escEntity = StringEscapeUtils.escapeJava(entityName);
 
         this
@@ -427,13 +435,19 @@ public class GenerateMendixJdbcProxies {
             final String getterName,
             final String setterName,
             final String javaPropName) {
+
+        String fieldName = javaPropName;
+        while (!genFieldNames.add(fieldName)) {
+            fieldName += "_";
+        }
+
         this
             .a(
                 "\n"//
                     + "\n" + "    private ")
             .a(propTypeName)
             .a(" ")
-            .a(javaPropName)
+            .a(fieldName)
             .a(";");
 
         this
@@ -446,7 +460,7 @@ public class GenerateMendixJdbcProxies {
             .a(
                 "() {" //
                     + "\n" + "        return this.")
-            .a(javaPropName)
+            .a(fieldName)
             .a(
                 ";" //
                     + "\n" + "    }");
@@ -461,7 +475,7 @@ public class GenerateMendixJdbcProxies {
             .a(
                 " val) {" //
                     + "\n" + "        this.")
-            .a(javaPropName)
+            .a(fieldName)
             .a(
                 " = val;" //
                     + "\n" + "    }");
@@ -530,7 +544,7 @@ public class GenerateMendixJdbcProxies {
     private static String getEntityName(final Class<?> proxyClass)
                                                                    throws IllegalAccessException,
                                                                        NoSuchFieldException {
-        return (String) proxyClass.getField("entityName").get(null);
+        return (String) proxyClass.getField(FNAME_ENTITY_NAME).get(null);
     }
 
     private static void deleteProxySources(final File fBpeSources) throws IOException {
